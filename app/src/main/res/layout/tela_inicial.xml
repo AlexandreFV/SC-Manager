@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/FundoGradiente"
+        android:layout_width="wrap_content"
+        android:layout_height="140dp"
+        android:background="@drawable/gradiente_fundo_loading"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/TelaInicial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Tela Inicial"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/GrupoIcones"
+        app:layout_constraintEnd_toEndOf="@+id/FundoGradiente"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/LogoApp"
+        android:layout_width="90dp"
+        android:layout_height="77dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/GrupoIcones"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/FundoGradiente"
+        app:srcCompat="@drawable/logo_app__1_" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/GrupoIcones"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="90dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:id="@+id/QuadradoGrafico"
+            android:layout_width="0dp"
+            android:layout_height="170dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/quadrado_grafico_inicio_parte_cima"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/grafico"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="64dp"
+            android:layout_marginEnd="64dp"
+            app:layout_constraintBottom_toTopOf="@+id/linhaQuadradoGrafico"
+            app:layout_constraintEnd_toEndOf="@+id/QuadradoGrafico"
+            app:layout_constraintStart_toStartOf="@+id/QuadradoGrafico"
+            app:layout_constraintTop_toBottomOf="@+id/periodo" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/GrupoQuadradoBaixoGrafico"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/QuadradoGrafico">
+
+            <View
+                android:id="@+id/QuadradoLista"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:maxHeight="300dp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@+id/quadradoBaixoGrafico"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/quadradoBaixoGrafico"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:background="@drawable/quadrado_grafico_inicio_parte_baixo"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/QuadradoLista" />
+
+            <ImageButton
+                android:id="@+id/setaBaixo"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:adjustViewBounds="false"
+                android:background="#006F1F1F"
+                android:cropToPadding="false"
+                app:layout_constraintBottom_toBottomOf="@+id/quadradoBaixoGrafico"
+                app:layout_constraintEnd_toEndOf="@+id/quadradoBaixoGrafico"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/quadradoBaixoGrafico"
+                app:srcCompat="@drawable/seta_para_baixo" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/Recebimento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Recebimento Total"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@+id/QuadradoGrafico"
+            app:layout_constraintStart_toStartOf="@+id/QuadradoGrafico"
+            app:layout_constraintTop_toTopOf="@+id/QuadradoGrafico" />
+
+        <TextView
+            android:id="@+id/periodo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Periodo: 01/04 até 01/05"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@+id/QuadradoGrafico"
+            app:layout_constraintStart_toStartOf="@+id/QuadradoGrafico"
+            app:layout_constraintTop_toBottomOf="@+id/Recebimento" />
+
+        <View
+            android:id="@+id/linhaQuadradoGrafico"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="#BDBDBD"
+            app:layout_constraintBottom_toBottomOf="@+id/QuadradoGrafico"
+            app:layout_constraintEnd_toEndOf="@+id/QuadradoGrafico"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/QuadradoGrafico" />
+
+        <Button
+            android:id="@+id/buttonGerenciamentoClientes"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="64dp"
+            android:autoText="true"
+            android:background="@drawable/button_gerenciamento_clientes"
+            android:text="Gerenciamento de Clientes"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/GrupoQuadradoBaixoGrafico" />
+
+        <Button
+            android:id="@+id/buttonGerenciamentoServico"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="64dp"
+            android:background="@drawable/button_gerenciamento_servicos"
+            android:text="Gerenciamento de Serviços"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonGerenciamentoClientes" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

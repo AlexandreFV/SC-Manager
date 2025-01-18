@@ -1,0 +1,9 @@
+<resources>
+    <!-- Tema para a tela cheia -->
+    <style name="Theme.Fullscreen" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Remove a barra de status (superior) -->
+        <item name="android:windowFullscreen">true</item>
+        <!-- Opcional: Mudar o modo de navegação também (barra de navegação) -->
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+</resources>

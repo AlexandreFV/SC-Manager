@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Fundo principal (sem sombra na parte de cima) -->
+
+
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#BDBDBD" /> <!-- Cor de fundo cinza -->
+            <corners android:radius="10dp" />
+            <solid android:color="#42A5F5" /> <!-- Cor da sombra (amarelo claro) -->
+
+        </shape>
+    </item>
+
+    <!-- Sombra apenas na parte de baixo -->
+    <item android:left="0dp" android:right="0dp" android:bottom="5dp"> <!-- A sombra é aplicada apenas na parte inferior -->
+        <shape android:shape="rectangle">
+            <solid android:color="#42A5F5" /> <!-- Cor da sombra (amarelo claro) -->
+            <corners android:radius="10dp"/> <!-- Bordas arredondadas para a sombra também -->
+        </shape>
+    </item>
+
+</layer-list>
