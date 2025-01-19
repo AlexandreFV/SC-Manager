@@ -13,3 +13,15 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+
+.gradle/
+**/gradle.properties
+!gradle/wrapper/gradle-wrapper.properties
+
+.idea/
+*.iml
+*.hprof
+
+.DS_Store
+*.orig
