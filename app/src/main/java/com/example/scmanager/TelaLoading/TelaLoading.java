@@ -2,9 +2,7 @@ package com.example.scmanager.TelaLoading;
 
 import android.animation.ObjectAnimator;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,8 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.scmanager.R;
 import com.example.scmanager.TelaInicial.TelaInicial;
-
-import java.lang.Object;
 
 public class TelaLoading extends AppCompatActivity {
 
@@ -27,36 +23,42 @@ public class TelaLoading extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loading);
+
+        // Inicializa os componentes
         LogoApp = findViewById(R.id.LogoApp);
         progressBar = findViewById(R.id.progressBar);
 
-        tornarLogoInvisivel(LogoApp);
-        tornarLogoInvisivel(progressBar);
+        // Configura a animação para o logo
+        tornarLogoVisivel(LogoApp);
 
+        // Exibe o ProgressBar por um tempo, ou até o carregamento ser concluído
+        progressBar.setVisibility(View.VISIBLE);
+
+        // Troca para a próxima tela após 2 segundos
         TrocaTela(2000);
     }
 
-    private void tornarLogoInvisivel(View view)
+    private void tornarLogoVisivel(View view)
     {
-        // Configurando a animação de fade-in (transparência)
-        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 1f, 0f);
-        animator.setDuration(2000); // Duração de 1 segundo
+        // Configura a animação de fade-in (transparência) para o logo
+        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 0f, 1f);
+        animator.setDuration(1000); // Duração da animação (2 segundos)
         animator.start(); // Inicia a animação
     }
+
     private void TrocaTela(int Tempo)
     {
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                // Do something after 5s = 5000ms
+                // Após o tempo configurado (Tempo), muda para a TelaInicial
                 Intent intent = new Intent(TelaLoading.this, TelaInicial.class);
                 startActivity(intent);
                 // Remove animações de transição
                 overridePendingTransition(0, 0);
-                finish(); // Opcional: encerra a tela de loading
+                finish(); // Finaliza a tela de loading
             }
-        }, Tempo);
+        }, Tempo); // Tempo de exibição da tela de loading
     }
-
 }
