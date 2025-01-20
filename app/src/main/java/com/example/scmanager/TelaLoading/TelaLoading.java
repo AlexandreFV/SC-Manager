@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -35,7 +36,9 @@ public class TelaLoading extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         // Troca para a próxima tela após 2 segundos
-        TrocaTela(2000);
+        animarProgressBar(1500);
+        TrocaTela(1500);
+
     }
 
     private void tornarLogoVisivel(View view)
@@ -43,7 +46,16 @@ public class TelaLoading extends AppCompatActivity {
         // Configura a animação de fade-in (transparência) para o logo
         ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 0f, 1f);
         animator.setDuration(1000); // Duração da animação (2 segundos)
+        animator.setInterpolator(new AccelerateDecelerateInterpolator()); // Suaviza a animação
         animator.start(); // Inicia a animação
+    }
+
+    private void animarProgressBar(int tempoTotal) {
+        // Configura a animação de preenchimento do ProgressBar
+        ObjectAnimator progressAnimator = ObjectAnimator.ofInt(progressBar, "progress", 0, 100);
+        progressAnimator.setDuration(tempoTotal); // Tempo total do carregamento
+        progressAnimator.setInterpolator(new AccelerateDecelerateInterpolator()); // Suaviza o preenchimento
+        progressAnimator.start(); // Inicia a animação
     }
 
     private void TrocaTela(int Tempo)

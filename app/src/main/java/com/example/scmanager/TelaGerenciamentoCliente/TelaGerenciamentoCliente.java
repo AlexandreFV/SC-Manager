@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -79,7 +80,8 @@ public class TelaGerenciamentoCliente extends AppCompatActivity implements View.
         ValueAnimator animator = ValueAnimator.ofFloat(imageFiltrarLista.getY(), posicaoFiltrarAcimaMaisOp);
 
         // Define a duração da animação
-        animator.setDuration(200); // Pode ser ajustada conforme necessário
+        animator.setDuration(300); // Pode ser ajustada conforme necessário
+        animator.setInterpolator(new AccelerateDecelerateInterpolator()); // Interpolação suave
 
         // Atualiza a posição de imageFiltrarLista durante a animação
         animator.addUpdateListener(animation -> {
@@ -113,7 +115,8 @@ public class TelaGerenciamentoCliente extends AppCompatActivity implements View.
         ValueAnimator animator = ValueAnimator.ofFloat(imageFiltrarLista.getY(), posicaoOriginalFiltrar);
 
         // Definir a duração da animação (lentamente descendo)
-        animator.setDuration(200);  // A duração pode ser ajustada conforme necessário
+        animator.setDuration(300);  // A duração pode ser ajustada conforme necessário
+        animator.setInterpolator(new AccelerateDecelerateInterpolator()); // Interpolação suave
 
         // Atualizar a posição de imageFiltrarLista durante a animação
         animator.addUpdateListener(animation -> {
@@ -159,7 +162,8 @@ public class TelaGerenciamentoCliente extends AppCompatActivity implements View.
         ValueAnimator animator = ValueAnimator.ofFloat(imageAdicionarLista.getY(), posicaoFiltrarAcimaMaisOp);
 
         // Define a duração da animação
-        animator.setDuration(200); // Pode ser ajustada conforme necessário
+        animator.setDuration(300); // Pode ser ajustada conforme necessário
+        animator.setInterpolator(new AccelerateDecelerateInterpolator()); // Interpolação suave
 
         // Atualiza a posição de imageAdicionarLista durante a animação
         animator.addUpdateListener(animation -> {
@@ -194,7 +198,8 @@ public class TelaGerenciamentoCliente extends AppCompatActivity implements View.
         ValueAnimator animator = ValueAnimator.ofFloat(imageAdicionarLista.getY(), posicaoOriginalAdicionar);
 
         // Definir a duração da animação (lentamente descendo)
-        animator.setDuration(200);  // A duração pode ser ajustada conforme necessário
+        animator.setDuration(300);  // A duração pode ser ajustada conforme necessário
+        animator.setInterpolator(new AccelerateDecelerateInterpolator()); // Interpolação suave
 
         // Atualizar a posição de imageFiltrarLista durante a animação
         animator.addUpdateListener(animation -> {

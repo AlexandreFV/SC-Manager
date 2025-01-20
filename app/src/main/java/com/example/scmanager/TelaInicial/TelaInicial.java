@@ -2,6 +2,7 @@ package com.example.scmanager.TelaInicial;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
@@ -10,7 +11,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
+import android.view.animation.OvershootInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -26,6 +29,7 @@ import com.example.scmanager.TelaGerenciamentoCliente.TelaGerenciamentoCliente;
 import com.example.scmanager.R;
 import com.example.scmanager.TelaGerenciamentoServico.TelaGerenciamentoServico;
 
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
@@ -165,9 +169,10 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
 
     private void animarGrafico()
     {
-        // Animação para preencher o gráfico em 2 segundos
-        grafico.animateXY(1500, 1500); // Animação em ambos os eixos (X e Y) com duração de 1 segundo cada
+        // Animação suave para preencher o gráfico em 2 segundos
+        grafico.animateXY(1000, 1000, Easing.Linear); // Animação em ambos os eixos (X e Y) com duração de 2 segundos e interpolação linear
     }
+
 
 
     @Override
@@ -197,78 +202,98 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
 
     }
 
-    private void trocarParaMenuAnalise(){
+    private void trocarParaMenuAnalise() {
         buttonTrocarParaViewDados.setEnabled(true);
         buttonTrocarParaViewAnalise.setEnabled(false);
-        // Definindo animação para a transição da view atual para a esquerda (saída)
+
+        // Animação de saída (da view atual para a esquerda)
         Animation slideOutLeft = new TranslateAnimation(0, -1000, 0, 0); // Move para a esquerda
-        slideOutLeft.setDuration(300);
+        slideOutLeft.setDuration(400); // Duração aumentada para 400ms para suavidade
+        slideOutLeft.setInterpolator(new AccelerateDecelerateInterpolator()); // Suavização do movimento
         slideOutLeft.setFillAfter(true);
 
-        // Definindo animação para a transição da direita para a esquerda (entrada da próxima view)
+        // Animação de entrada (da direita para a posição central)
         Animation slideInRight = new TranslateAnimation(1000, 0, 0, 0); // Move da direita para o centro
-        slideInRight.setDuration(300);
+        slideInRight.setDuration(400); // Mesma duração para consistência
+        slideInRight.setInterpolator(new AccelerateDecelerateInterpolator()); // Suavização do movimento
         slideInRight.setFillAfter(true);
 
         // Aplicando as animações no ViewSwitcher
-        SwitcherDasInfosDoGrafico.setOutAnimation(slideOutLeft); // Animação de saída (move para a esquerda)
-        SwitcherDasInfosDoGrafico.setInAnimation(slideInRight); // Animação de entrada (move da direita para o centro)
+        SwitcherDasInfosDoGrafico.setOutAnimation(slideOutLeft);
+        SwitcherDasInfosDoGrafico.setInAnimation(slideInRight);
 
         // Alternando para a próxima view
         SwitcherDasInfosDoGrafico.showNext();
-        GrupoDados.setVisibility(View.GONE);
+        GrupoDados.setVisibility(View.GONE); // Esconde o grupo de dados após a transição
     }
 
-    private void trocarParaMenuDados(){
+    private void trocarParaMenuDados() {
         buttonTrocarParaViewDados.setEnabled(false);
         buttonTrocarParaViewAnalise.setEnabled(true);
-        // Definindo animação para a transição da view atual para a direita (saída)
+
+        // Animação de saída (da view atual para a direita)
         Animation slideOutRight = new TranslateAnimation(0, 1000, 0, 0); // Move para a direita
-        slideOutRight.setDuration(300);
+        slideOutRight.setDuration(400); // Duração aumentada para 400ms
+        slideOutRight.setInterpolator(new AccelerateDecelerateInterpolator()); // Suavização
         slideOutRight.setFillAfter(true);
 
-        // Definindo animação para a transição da esquerda para a direita (entrada da view anterior)
+        // Animação de entrada (da esquerda para a posição central)
         Animation slideInLeft = new TranslateAnimation(-1000, 0, 0, 0); // Move da esquerda para o centro
-        slideInLeft.setDuration(300);
+        slideInLeft.setDuration(400);
+        slideInLeft.setInterpolator(new AccelerateDecelerateInterpolator());
         slideInLeft.setFillAfter(true);
 
         // Aplicando as animações no ViewSwitcher
-        SwitcherDasInfosDoGrafico.setOutAnimation(slideOutRight); // Animação de saída (move para a direita)
-        SwitcherDasInfosDoGrafico.setInAnimation(slideInLeft); // Animação de entrada (move da esquerda para o centro)
+        SwitcherDasInfosDoGrafico.setOutAnimation(slideOutRight);
+        SwitcherDasInfosDoGrafico.setInAnimation(slideInLeft);
 
         // Alternando para a view anterior
         SwitcherDasInfosDoGrafico.showNext();
-        GrupoAnalise.setVisibility(View.GONE);
+        GrupoAnalise.setVisibility(View.GONE); // Esconde o grupo de análise após a transição
     }
 
     private void animarQuadradoLista(boolean expandir) {
         int start = expandir ? -400 : 0;
         int end = expandir ? 0 : -400;
 
+        // Configura o animador
         ValueAnimator animator = ValueAnimator.ofInt(start, end);
-        animator.setDuration(400);
+        animator.setDuration(400); // Aumentei levemente a duração para mais suavidade (500ms)
+        animator.setInterpolator(new AccelerateDecelerateInterpolator()); // Suavização no movimento
+
         animator.addUpdateListener(animation -> {
             int topMargin = (int) animation.getAnimatedValue();
+
+            // Atualiza as margens do layout
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) SwitcherDasInfosDoGrafico.getLayoutParams();
             params.topMargin = topMargin;
             SwitcherDasInfosDoGrafico.setLayoutParams(params);
 
-            int altura = 400 + topMargin; // Ajustar conforme necessário
-            SwitcherDasInfosDoGrafico.getLayoutParams().height = altura;
+            // Ajusta a altura conforme o valor da animação
+            int altura = 400 + topMargin; // Ajuste a altura conforme necessário
+            SwitcherDasInfosDoGrafico.getLayoutParams().height = Math.max(altura, 0); // Garante altura mínima de 0
             SwitcherDasInfosDoGrafico.requestLayout();
         });
-        animator.start();
 
-        if (!expandir) {
-            animator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    SwitcherDasInfosDoGrafico.setVisibility(View.GONE);
+        // Listener para lidar com a visibilidade ao final da animação
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (!expandir) {
+                    SwitcherDasInfosDoGrafico.setVisibility(View.GONE); // Esconde o componente após a animação de retração
                 }
-            });
-        } else {
-            SwitcherDasInfosDoGrafico.setVisibility(View.VISIBLE);
-        }
+            }
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+                if (expandir) {
+                    SwitcherDasInfosDoGrafico.setVisibility(View.VISIBLE); // Mostra o componente antes de expandir
+                }
+            }
+        });
+
+        // Inicia a animação
+        animator.start();
     }
 
     private void deixarInvisivelGrupoIcones(View vaiSerInvisivel)
@@ -276,24 +301,35 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         vaiSerInvisivel.setVisibility(View.INVISIBLE);
     }
 
-    private void deixarVisivelGrupoIcones(View vaiSerVisivel)
-    {
+    private void deixarVisivelGrupoIcones(View vaiSerVisivel) {
+        grafico.setVisibility(View.INVISIBLE);
         // Definindo a visibilidade como visível antes da animação começar
         vaiSerVisivel.setVisibility(View.VISIBLE);
 
         // Configurando a animação de fade-in (transparência)
         ObjectAnimator animator = ObjectAnimator.ofFloat(vaiSerVisivel, "alpha", 0f, 1f);
-        animator.setDuration(400); // Duração de 1 segundo
+        animator.setDuration(500); // Duração de 400ms
+        animator.setInterpolator(new AccelerateDecelerateInterpolator()); // Suavização
         animator.start(); // Inicia a animação
     }
 
     private void AnimaçãoSubirIconesInicio() {
         // Animação para mover o GrupoIcones de 1000 pixels abaixo até a posição inicial
         ObjectAnimator animator = ObjectAnimator.ofFloat(GrupoIcones, "translationY", 1000f, 0f);
-        animator.setDuration(500); // Duração de 2 segundos
+        animator.setDuration(600); // Duração de 500ms
+        animator.setInterpolator(new AccelerateDecelerateInterpolator()); // Adiciona um efeito elástico ao final
         animator.start(); // Inicia a animação
-        animarGrafico();
+
+        // Chamar animação do gráfico após um pequeno atraso para sincronia
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                grafico.setVisibility(View.VISIBLE);
+                animarGrafico();
+            }
+        });
     }
+
 
     private void AnimacaoDiminuirGradiente() {
         // Armazena os tamanhos originais do FundoGradiente
@@ -303,67 +339,68 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         // Medir o tamanho do FundoGradiente com altura WRAP_CONTENT
         FundoGradiente.getLayoutParams().height = ConstraintLayout.LayoutParams.WRAP_CONTENT;
         FundoGradiente.requestLayout();
-        FundoGradiente.post(new Runnable() {
-            @Override
-            public void run() {
-                // Obtém a altura real de WRAP_CONTENT após a medida
-                int wrapContentHeight = FundoGradiente.getHeight();
+        FundoGradiente.post(() -> {
+            // Obtém a altura real de WRAP_CONTENT após a medida
+            int wrapContentHeight = FundoGradiente.getHeight();
 
-                // Define o layout inicial com largura total e altura wrap_content
-                FundoGradiente.getLayoutParams().width = ConstraintLayout.LayoutParams.MATCH_PARENT;
-                FundoGradiente.getLayoutParams().height = wrapContentHeight;
-                FundoGradiente.setElevation(100); // Inicia com uma elevação alta
+            // Define o layout inicial com largura total e altura wrap_content
+            FundoGradiente.getLayoutParams().width = ConstraintLayout.LayoutParams.MATCH_PARENT;
+            FundoGradiente.getLayoutParams().height = wrapContentHeight;
+            FundoGradiente.setElevation(100); // Inicia com uma elevação alta
+            FundoGradiente.requestLayout();
+
+            // Animação para ajustar a largura do FundoGradiente
+            ValueAnimator widthAnimator = ValueAnimator.ofInt(
+                    ConstraintLayout.LayoutParams.MATCH_PARENT,
+                    getOriginalWidthGradiente
+            );
+            widthAnimator.setInterpolator(new AccelerateDecelerateInterpolator()); // Suaviza
+            widthAnimator.setDuration(700); // Duração de 400ms
+            widthAnimator.addUpdateListener(animation -> {
+                int animatedValue = (int) animation.getAnimatedValue();
+                FundoGradiente.getLayoutParams().width = animatedValue;
                 FundoGradiente.requestLayout();
+            });
 
-                // Animação para ajustar a largura do FundoGradiente
-                ValueAnimator widthAnimator = ValueAnimator.ofInt(
-                        ConstraintLayout.LayoutParams.MATCH_PARENT,
-                        getOriginalWidthGradiente
-                );
-                widthAnimator.setDuration(400); // Duração de 1,5 segundos
-                widthAnimator.addUpdateListener(animation -> {
-                    int animatedValue = (int) animation.getAnimatedValue();
-                    FundoGradiente.getLayoutParams().width = animatedValue;
-                    FundoGradiente.requestLayout(); // Atualiza o layout
-                });
+            // Animação para ajustar a altura do FundoGradiente
+            ValueAnimator heightAnimator = ValueAnimator.ofInt(
+                    wrapContentHeight,
+                    getOriginalHeightGradiente
+            );
+            heightAnimator.setInterpolator(new AccelerateDecelerateInterpolator()); // Suaviza
+            heightAnimator.setDuration(700); // Duração de 400ms
+            heightAnimator.addUpdateListener(animation -> {
+                int animatedValue = (int) animation.getAnimatedValue();
+                FundoGradiente.getLayoutParams().height = animatedValue;
+                FundoGradiente.requestLayout();
+            });
 
-                // Animação para ajustar a altura do FundoGradiente
-                ValueAnimator heightAnimator = ValueAnimator.ofInt(
-                        wrapContentHeight,
-                        getOriginalHeightGradiente
-                );
-                heightAnimator.setDuration(400); // Duração de 1,5 segundos
-                heightAnimator.addUpdateListener(animation -> {
-                    int animatedValue = (int) animation.getAnimatedValue();
-                    FundoGradiente.getLayoutParams().height = animatedValue;
-                    FundoGradiente.requestLayout(); // Atualiza o layout
-                });
+            // Animação para reduzir a elevação do FundoGradiente
+            ObjectAnimator elevationAnimator = ObjectAnimator.ofFloat(
+                    FundoGradiente,
+                    "elevation",
+                    100f, // Inicia com elevação alta
+                    0f    // Termina com elevação zero
+            );
+            elevationAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+            elevationAnimator.setDuration(700); // Duração de 400ms
 
-                // Animação para reduzir a elevação do FundoGradiente (diminuir sobreposição)
-                ObjectAnimator elevationAnimator = ObjectAnimator.ofFloat(
-                        FundoGradiente,
-                        "elevation",
-                        100f, // Inicia com elevação alta
-                        0f    // Termina com elevação zero
-                );
-                elevationAnimator.setDuration(400); // Duração de 1,5 segundos
+            // Combina todas as animações em um AnimatorSet para sincronização
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.playTogether(widthAnimator, heightAnimator, elevationAnimator);
+            animatorSet.start();
 
-                // Inicia todas as animações simultaneamente
-                widthAnimator.start();
-                heightAnimator.start();
-                elevationAnimator.start();
-                // Quando a animação terminar, iniciar a animação dos ícones
-                elevationAnimator.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        deixarVisivelGrupoIcones(GrupoIcones);
-                        deixarVisivelGrupoIcones(LogoApp);
-                        deixarVisivelGrupoIcones(TelaInicial);
-                        AnimaçãoSubirIconesInicio(); // Inicia a animação dos ícones
-                    }
-                });
-            }
+            // Após as animações, iniciar a animação dos ícones
+            animatorSet.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    deixarVisivelGrupoIcones(GrupoIcones);
+                    deixarVisivelGrupoIcones(LogoApp);
+                    deixarVisivelGrupoIcones(TelaInicial);
+                    AnimaçãoSubirIconesInicio(); // Inicia a animação dos ícones
+                }
+            });
         });
     }
 
