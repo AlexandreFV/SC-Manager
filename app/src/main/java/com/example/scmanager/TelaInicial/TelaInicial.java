@@ -397,7 +397,7 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
 
     private void animateTextTyping(String text, TextView textView) {
         final Handler handler = new Handler();
-        final int delay = 30; // Milissegundos entre cada letra
+        final int delay = 40; // Milissegundos entre cada letra
         final StringBuilder displayedText = new StringBuilder();
 
         final char[] textArray = text.toCharArray();
