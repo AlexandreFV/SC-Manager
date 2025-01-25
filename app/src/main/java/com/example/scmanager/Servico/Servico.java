@@ -1,4 +1,4 @@
-package com.example.scmanager.TelaGerenciamentoServico;
+package com.example.scmanager.Servico;
 
 public class Servico {
     private Integer id;

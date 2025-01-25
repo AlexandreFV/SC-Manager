@@ -1,4 +1,4 @@
-package com.example.scmanager.TelaInicial;
+package com.example.scmanager.Inicial.Tela;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
-import android.view.animation.OvershootInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -23,11 +22,12 @@ import android.widget.ViewSwitcher;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.splashscreen.SplashScreen;
 
 import com.example.scmanager.BuildConfig;
-import com.example.scmanager.TelaGerenciamentoCliente.TelaGerenciamentoCliente;
+import com.example.scmanager.Cliente.Tela.TelaGerenciamentoCliente;
 import com.example.scmanager.R;
-import com.example.scmanager.TelaGerenciamentoServico.TelaGerenciamentoServico;
+import com.example.scmanager.Servico.Tela.TelaGerenciamentoServico;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
@@ -44,11 +44,8 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import org.checkerframework.common.returnsreceiver.qual.This;
-
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.Executor;
 
 
 public class TelaInicial extends AppCompatActivity implements View.OnClickListener{
@@ -85,6 +82,9 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
     private TextView textRespostaIA;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Handle the splash screen transition.
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tela_inicial);
 

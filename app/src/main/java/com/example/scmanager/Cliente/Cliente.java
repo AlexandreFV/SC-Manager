@@ -1,27 +1,23 @@
-package com.example.scmanager.TelaGerenciamentoCliente;
+package com.example.scmanager.Cliente;
 
 public class Cliente {
-
-    private Integer id;
+    private long id;
     private String nome;
     private String telefone;
 
     // Construtor
-    public Cliente(Integer id, String nome, String telefone) {
+    public Cliente(long id, String nome, String telefone) {
         this.id = id;
         this.nome = nome;
         this.telefone = telefone;
     }
 
-    public Cliente() {
-    }
-
     // Getters e Setters
-    public Integer getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(long id) {
         this.id = id;
     }
 

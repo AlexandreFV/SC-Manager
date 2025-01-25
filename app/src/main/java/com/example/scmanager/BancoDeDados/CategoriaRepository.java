@@ -4,9 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class CategoriaRepository {
 
     public static final String SQL_CREATE_CATEGORIAS =
@@ -20,19 +17,32 @@ public class CategoriaRepository {
         banco = db;
     }
 
-    public void AdicionarCategoria(String nome) {
+    // Metodo auxiliar para verificar a existência de uma categoria pelo nome
+    private boolean existeCategoriaPorNome(String nome) {
+        String query = "SELECT EXISTS (SELECT 1 FROM Categorias WHERE nome = ?)";
+        try (Cursor cursor = banco.rawQuery(query, new String[]{nome})) {
+            return cursor != null && cursor.moveToFirst() && cursor.getInt(0) == 1;
+        }
+    }
+
+    // Metodo auxiliar para verificar a existência de uma categoria pelo ID
+    private boolean existeCategoriaPorId(int id) {
+        String query = "SELECT EXISTS (SELECT 1 FROM Categorias WHERE id = ?)";
+        try (Cursor cursor = banco.rawQuery(query, new String[]{String.valueOf(id)})) {
+            return cursor != null && cursor.moveToFirst() && cursor.getLong(0) == 1;
+        }
+    }
+
+    // Adicionar uma nova categoria
+    public boolean AdicionarCategoria(String nome) {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new IllegalArgumentException("O nome da categoria não pode ser vazio.");
+        }
+
         banco.beginTransaction();
         try {
-            String query = "SELECT EXISTS (SELECT 1 FROM Categorias WHERE nome = ?)";
-            Cursor cursor = banco.rawQuery(query, new String[]{nome});
-
-            if (cursor != null && cursor.moveToFirst() && cursor.getInt(0) == 1) {
-                cursor.close();
+            if (existeCategoriaPorNome(nome)) {
                 throw new IllegalArgumentException("Já existe uma categoria com o mesmo nome.");
-            }
-
-            if (cursor != null) {
-                cursor.close();
             }
 
             ContentValues valores = new ContentValues();
@@ -40,35 +50,29 @@ public class CategoriaRepository {
 
             banco.insert("Categorias", null, valores);
             banco.setTransactionSuccessful();
+            return true; // Categoria adicionada com sucesso
         } catch (Exception e) {
             e.printStackTrace();
+            return false; // Falha ao adicionar a categoria
         } finally {
             banco.endTransaction();
-
         }
     }
 
-    public void EditarCategoria(Integer idCategoria, String nome) {
+    // Editar uma categoria existente
+    public boolean EditarCategoria(int idCategoria, String nome) {
+        if (idCategoria == 0 || nome == null || nome.trim().isEmpty()) {
+            throw new IllegalArgumentException("O ID e o nome da categoria são obrigatórios.");
+        }
+
         banco.beginTransaction();
         try {
-            String queryCategoria = "SELECT EXISTS (SELECT 1 FROM Categorias WHERE id = ?)";
-            Cursor cursorCategoria = banco.rawQuery(queryCategoria, new String[]{String.valueOf(idCategoria)});
-
-            if (cursorCategoria == null || !cursorCategoria.moveToFirst() || cursorCategoria.getInt(0) == 0) {
-                cursorCategoria.close();
-                throw new IllegalArgumentException("Não existe uma categoria com id: " + idCategoria);
+            if (!existeCategoriaPorId(idCategoria)) {
+                throw new IllegalArgumentException("Não existe uma categoria com o ID: " + idCategoria);
             }
 
-            String query = "SELECT EXISTS (SELECT 1 FROM Categorias WHERE nome = ?)";
-            Cursor cursor = banco.rawQuery(query, new String[]{nome});
-
-            if (cursor != null && cursor.moveToFirst() && cursor.getInt(0) == 1) {
-                cursor.close();
+            if (existeCategoriaPorNome(nome)) {
                 throw new IllegalArgumentException("Já existe uma categoria com o mesmo nome.");
-            }
-
-            if (cursor != null) {
-                cursor.close();
             }
 
             ContentValues valores = new ContentValues();
@@ -76,59 +80,36 @@ public class CategoriaRepository {
 
             banco.update("Categorias", valores, "id = ?", new String[]{String.valueOf(idCategoria)});
             banco.setTransactionSuccessful();
+            return true; // Categoria editada com sucesso
         } catch (Exception e) {
             e.printStackTrace();
+            return false; // Falha ao editar a categoria
         } finally {
             banco.endTransaction();
-
         }
     }
 
-    public void ExcluirCategoria(Integer id) {
+    // Excluir uma categoria pelo ID
+    public boolean ExcluirCategoria(int id) {
+        if (id == 0) {
+            throw new IllegalArgumentException("O ID da categoria é obrigatório.");
+        }
+
         banco.beginTransaction();
-
-        Cursor cursor = null;
         try {
-            String query = "SELECT EXISTS (SELECT 1 FROM Categorias WHERE id = ?)";
-            cursor = banco.rawQuery(query, new String[]{String.valueOf(id)});
-
-            if (cursor == null || !cursor.moveToFirst() || cursor.getInt(0) == 0) {
-                throw new IllegalArgumentException("Não existe essa Categoria.");
+            if (!existeCategoriaPorId(id)) {
+                throw new IllegalArgumentException("Não existe uma categoria com o ID: " + id);
             }
 
             banco.delete("Categorias", "id = ?", new String[]{String.valueOf(id)});
             banco.setTransactionSuccessful();
+            return true; // Categoria excluída com sucesso
         } catch (Exception e) {
             e.printStackTrace();
+            return false; // Falha ao excluir a categoria
         } finally {
             banco.endTransaction();
-            if (cursor != null) {
-                cursor.close();
-            }
         }
-    }
-
-    public List<String> BuscarCategorias() {
-        List<String> categorias = new ArrayList<>();
-        Cursor cursor = null;
-        try {
-            String query = "SELECT nome FROM Categorias";
-            cursor = banco.rawQuery(query, null);
-
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    String nome = cursor.getString(cursor.getColumnIndex("nome"));
-                    categorias.add(nome);
-                } while (cursor.moveToNext());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-        return categorias;
     }
 
 }

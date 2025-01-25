@@ -1,41 +1,25 @@
-package com.example.scmanager.GerenciamentoDeCategorias;
+package com.example.scmanager.Categorias.Tela;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.renderscript.ScriptGroup;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
-
-import androidx.core.app.DialogCompat;
-import androidx.fragment.app.DialogFragment;
+import android.view.ViewGroup;
 
 import com.example.scmanager.BancoDeDados.CategoriaRepository;
 import com.example.scmanager.BancoDeDados.ControladorBancoDeDados;
 import com.example.scmanager.R;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-public class TelaAdicionarCategoria extends DialogFragment {
+public class TelaAdicionarCategoria extends BottomSheetDialogFragment {
 
 
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        // Crie o layout do modal
-        //View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_adicionar_item, null);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate o layout do Bottom Sheet
+        View view = inflater.inflate(R.layout.dialog_adicionar_cliente, container, false);
 
         // Inicializa o controlador do banco (Singleton)
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Adicionar Item")
-                .setMessage("Preencha as informações para adicionar um item")
-                //.setView(R.layout.dialog_adicionar_item)  // Layout do modal
-                .setPositiveButton("Adicionar", (dialog, id) -> {
-                    // Lógica para adicionar item
-                })
-                .setNegativeButton("Cancelar", (dialog, id) -> {
-                    // Lógica para cancelar
-                });
-        return builder.create();
+        return view;
     }
 
     private void criarCategoriaDeServico()

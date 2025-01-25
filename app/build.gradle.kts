@@ -71,6 +71,8 @@ dependencies {
     implementation("com.google.guava:guava:31.0.1-android")
     // Required for streaming operations (to use `Publisher` from Reactive Streams)
     implementation("org.reactivestreams:reactive-streams:1.0.4")
+    implementation("androidx.core:core-splashscreen:1.0.0")
+    implementation ("com.google.android.material:material:1.13.0-alpha10")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

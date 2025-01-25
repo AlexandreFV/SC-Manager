@@ -1,4 +1,4 @@
-package com.example.scmanager.GerenciamentoDeCategorias;
+package com.example.scmanager.Categorias;
 
 public class Categoria {
     private Integer id;

@@ -1,4 +1,4 @@
-package com.example.scmanager.TelaGerenciamentoCliente;
+package com.example.scmanager.Cliente.Tela;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -10,10 +10,21 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.scmanager.BancoDeDados.ClienteRepository;
+import com.example.scmanager.Cliente.Adapter.ClienteAdapter;
+import com.example.scmanager.Cliente.Cliente;
+import com.example.scmanager.Cliente.ViewModel.ClienteViewModel;
 import com.example.scmanager.R;
+import com.example.scmanager.TelaAdicionarCategoriaClienteServico;
 
-public class TelaGerenciamentoCliente extends AppCompatActivity implements View.OnClickListener {
+import java.util.List;
+
+public class TelaGerenciamentoCliente extends AppCompatActivity implements View.OnClickListener  {
 
     private ImageButton voltarTela;
     private ImageButton imageMaisOpcoes;
@@ -23,6 +34,10 @@ public class TelaGerenciamentoCliente extends AppCompatActivity implements View.
 
     private float posicaoOriginalFiltrar;
     private float posicaoOriginalAdicionar;
+
+    private RecyclerView recyclerViewClientes;
+    private ClienteAdapter clienteAdapter;
+    private ClienteViewModel clienteViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +53,40 @@ public class TelaGerenciamentoCliente extends AppCompatActivity implements View.
         imageFiltrarLista = findViewById(R.id.imageFiltrarLista);
         imageFiltrarLista.setOnClickListener(this);
 
+        recyclerViewClientes = findViewById(R.id.QuadradoLista);
+        recyclerViewClientes.setLayoutManager(new LinearLayoutManager(this));
+
+        // Obter instância do banco de dados e do repositório
+        ClienteRepository clienteRepository = new ClienteRepository(this);
+        clienteViewModel = new ViewModelProvider(this).get(ClienteViewModel.class);
+
+        // Adicionando o Observer para o LiveData
+        clienteViewModel.getListaClientes().observe(this, new Observer<List<Cliente>>() {
+            @Override
+            public void onChanged(List<Cliente> clientes) {
+                // Atualize o Adapter com a nova lista de clientes
+                if (clienteAdapter == null) {
+                    clienteAdapter = new ClienteAdapter(TelaGerenciamentoCliente.this, clientes);
+                    recyclerViewClientes.setAdapter(clienteAdapter);
+                } else {
+                    clienteAdapter.setClientes(clientes); // Supondo que o Adapter tenha um metodo para atualizar a lista
+                }
+
+                // Atualiza a altura do RecyclerView com base na quantidade de itens
+                int itemCount = clientes.size();
+                int itemHeight = dpToPx(100); // Convertendo 100dp para pixels
+
+                if (itemCount == 0) {
+                    // Se não houver itens, defina a altura do RecyclerView como 0
+                    recyclerViewClientes.getLayoutParams().height = 0;
+                } else {
+                    // Se houver itens, defina a altura do RecyclerView com base no número de itens
+                    recyclerViewClientes.getLayoutParams().height = Math.min(itemCount * itemHeight, dpToPx(500)); // Limite de 500dp
+                }
+                recyclerViewClientes.requestLayout();
+            }
+        });
+
     }
 
     @Override
@@ -52,6 +101,11 @@ public class TelaGerenciamentoCliente extends AppCompatActivity implements View.
             }
         } else if (view.getId() == R.id.imageAdicionarLista) {
             Toast.makeText(getBaseContext(), "apertou em adicionar", Toast.LENGTH_SHORT).show();
+            TelaAdicionarCategoriaClienteServico fragment = new TelaAdicionarCategoriaClienteServico();
+            TelaAdicionarCategoriaClienteServico.LayoutExibir = 2;
+            fragment.setClienteViewModel(clienteViewModel);
+            fragment.show(getSupportFragmentManager(), fragment.getTag());
+
         } else if (view.getId() == R.id.imageFiltrarLista) {
             Toast.makeText(getBaseContext(), "apertou em filtrar", Toast.LENGTH_SHORT).show();
         }
@@ -221,5 +275,51 @@ public class TelaGerenciamentoCliente extends AppCompatActivity implements View.
         // Iniciar a animação
         animator.start();
     }
+
+    public int dpToPx(int dp) {
+        float density = getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
+    }
+
+    //Funcao chamada ao clicar na lupa do recyclerView (tela detalhes cliente)
+    public void onClienteClicked(Cliente cliente) {
+        // Aqui você pode fazer algo com o cliente clicado, como pegar o ID
+        long clienteId = cliente.getId();  // Ou qualquer outra propriedade do cliente
+        String ClienteNome = cliente.getNome();
+        String ClieneTelefone = cliente.getTelefone();
+
+        // Passa o ID do cliente para o BottomSheet usando um Bundle
+        Bundle bundle = new Bundle();
+        bundle.putLong("clienteId", clienteId);
+        bundle.putString("clienteNome", ClienteNome);
+        bundle.putString("clienteTelefone", ClieneTelefone);
+
+        // Exemplo: Você pode iniciar uma nova Activity com os detalhes do cliente
+        BottomSheetDetalhesCliente fragment = new BottomSheetDetalhesCliente();
+        fragment.setArguments(bundle);
+        fragment.setClienteViewModel(clienteViewModel);
+        fragment.show(getSupportFragmentManager(), fragment.getTag());
+    }
+
+    //Será usada dentro da class de abrir o bottom sheet de detalhes
+//    private void Excluir(Cliente cliente)
+//    {
+//        // Aqui você pode fazer algo com o cliente clicado, como pegar o ID
+//        long clienteId = cliente.getId();  // Ou qualquer outra propriedade do cliente
+//        String ClienteNome = cliente.getNome();
+//        String ClieneTelefone = cliente.getTelefone();
+//
+//        // Passa o ID do cliente para o BottomSheet usando um Bundle
+//        Bundle bundle = new Bundle();
+//        bundle.putLong("clienteId", clienteId);
+//        bundle.putString("clienteNome", ClienteNome);
+//        bundle.putString("clienteTelefone", ClieneTelefone);
+//
+//        // Exemplo: Você pode iniciar uma nova Activity com os detalhes do cliente
+//        BottomSheetDeletarCliente fragment = new BottomSheetDeletarCliente();
+//        fragment.setArguments(bundle);
+//        fragment.setClienteViewModel(clienteViewModel);
+//        fragment.show(getSupportFragmentManager(), fragment.getTag());
+//    }
 
 }

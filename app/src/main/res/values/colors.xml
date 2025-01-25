@@ -7,4 +7,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="cor_borda"></color>
+    <color name="color_FFEDCC">#FFEDCC</color> <!-- Cor 1 -->
+    <color name="color_DCEEFB">#DCEEFB</color> <!-- Cor 2 -->
+
 </resources>

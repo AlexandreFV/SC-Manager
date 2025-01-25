@@ -1,8 +1,6 @@
 package com.example.scmanager.BancoDeDados;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -18,7 +16,7 @@ public class ControladorBancoDeDados extends SQLiteOpenHelper {
                     "DROP TABLE IF EXISTS Clientes;";
 
 
-    private ControladorBancoDeDados(Context context) {
+    public ControladorBancoDeDados(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
