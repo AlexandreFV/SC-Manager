@@ -1,4 +1,4 @@
-package com.example.scmanager.Cliente.ViewModel;
+package com.example.scmanager.Gerenciamento.ViewModel;
 
 import android.app.Application;
 import android.os.Looper;
@@ -11,7 +11,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.scmanager.BancoDeDados.ClienteRepository;
-import com.example.scmanager.Cliente.Cliente;
+import com.example.scmanager.Gerenciamento.Objetos.Cliente;
 
 import java.util.List;
 

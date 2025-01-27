@@ -28,7 +28,7 @@
 
 
         <activity
-            android:name=".Cliente.Tela.TelaGerenciamentoCliente"
+            android:name=".Gerenciamento.Tela.TelaGerenciamento"
             android:theme="@style/Theme.SCManager"/>
 
         <meta-data

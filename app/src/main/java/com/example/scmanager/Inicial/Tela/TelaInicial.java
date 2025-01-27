@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -25,10 +26,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.splashscreen.SplashScreen;
 
 import com.example.scmanager.BuildConfig;
-import com.example.scmanager.Cliente.Tela.TelaGerenciamentoCliente;
+import com.example.scmanager.Gerenciamento.Tela.TelaGerenciamento;
 import com.example.scmanager.R;
-import com.example.scmanager.Servico.Tela.TelaGerenciamentoServico;
-
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -46,6 +45,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.Executors;
 
 
 public class TelaInicial extends AppCompatActivity implements View.OnClickListener{
@@ -65,6 +65,7 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
     private Button buttonGerenciamentoClientes;
 
     private Button buttonGerenciamentoServico;
+    private Button buttonGerenciamentoCategoria;
 
     private ImageButton setaBaixo;
 
@@ -122,7 +123,8 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         setaBaixo.setOnClickListener(this);
         buttonTrocarParaViewAnalise.setOnClickListener(this);
         buttonTrocarParaViewDados.setOnClickListener(this);
-
+        buttonGerenciamentoCategoria = findViewById(R.id.buttonGerenciamentoCategoria);
+        buttonGerenciamentoCategoria.setOnClickListener(this);
     }
 
     private void configurarGrafico(PieData data)
@@ -178,12 +180,20 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.buttonGerenciamentoClientes) {
-            Intent intent = new Intent(TelaInicial.this, TelaGerenciamentoCliente.class);
+            Intent intent = new Intent(TelaInicial.this, TelaGerenciamento.class);
+            intent.putExtra("botao_apertado", "cliente");
             startActivity(intent); // Inicia a nova Activity
-        } else if (view.getId() == R.id.buttonGerenciamentoServico) {
-            Intent intent = new Intent(TelaInicial.this, TelaGerenciamentoServico.class);
+        }
+        if (view.getId() == R.id.buttonGerenciamentoCategoria) {
+            Intent intent = new Intent(TelaInicial.this, TelaGerenciamento.class);
+            intent.putExtra("botao_apertado", "categoria");
             startActivity(intent); // Inicia a nova Activity
-        } else if (view.getId() == R.id.setaBaixo) {
+        }
+//        else if (view.getId() == R.id.buttonGerenciamentoServico) {
+//            Intent intent = new Intent(TelaInicial.this, TelaGerenciamentoServico.class);
+//            startActivity(intent); // Inicia a nova Activity
+//        }
+        else if (view.getId() == R.id.setaBaixo) {
             if (SwitcherDasInfosDoGrafico.getVisibility() == View.VISIBLE)
             {
                 animarQuadradoLista(false);
@@ -404,33 +414,35 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         });
     }
 
-    private void analisarDadosIA()
-    {
+    private void analisarDadosIA() {
         // The Gemini 1.5 models are versatile and work with both text-only and multimodal prompts
-        GenerativeModel gm = new GenerativeModel(/* modelName */ "gemini-1.5-flash",
-        // Access your API key as a Build Configuration variable (see "Set up your API key" above)
-                BuildConfig.GEMINI_API_KEY);
+        GenerativeModel gm = new GenerativeModel(
+                /* modelName */ "gemini-1.5-flash",
+                // Access your API key as a Build Configuration variable
+                BuildConfig.GEMINI_API_KEY
+        );
         GenerativeModelFutures model = GenerativeModelFutures.from(gm);
 
         Content content = new Content.Builder()
                 .addText("Me conte uma curiosidade sobre IA")
                 .build();
 
-
-                ListenableFuture<GenerateContentResponse> response = model.generateContent(content);
+        ListenableFuture<GenerateContentResponse> response = model.generateContent(content);
         Futures.addCallback(response, new FutureCallback<GenerateContentResponse>() {
             @Override
             public void onSuccess(GenerateContentResponse result) {
                 String resultText = result.getText();
-                runOnUiThread(() -> animateTextTyping(resultText, textRespostaIA));
+                // Use Handler to run on the main thread for API < 28
+                new Handler(Looper.getMainLooper()).post(() -> animateTextTyping(resultText, textRespostaIA));
             }
 
             @Override
             public void onFailure(Throwable t) {
                 t.printStackTrace();
             }
-        }, this.getMainExecutor());
+        }, Executors.newSingleThreadExecutor()); // Substitui `getMainExecutor` por um Executor customizado
     }
+
 
     private void animateTextTyping(String text, TextView textView) {
         final Handler handler = new Handler();

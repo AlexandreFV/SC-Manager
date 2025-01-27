@@ -1,4 +1,4 @@
-package com.example.scmanager.Cliente.Tela;
+package com.example.scmanager.Gerenciamento.Tela.Cliente;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.scmanager.BancoDeDados.ClienteRepository;
-import com.example.scmanager.Cliente.Cliente;
-import com.example.scmanager.Cliente.ViewModel.ClienteViewModel;
+import com.example.scmanager.Gerenciamento.Objetos.Cliente;
+import com.example.scmanager.Gerenciamento.ViewModel.ClienteViewModel;
 import com.example.scmanager.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;

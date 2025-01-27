@@ -12,10 +12,9 @@
 
     import androidx.constraintlayout.widget.ConstraintLayout;
 
-    import com.example.scmanager.Cliente.ViewModel.ClienteViewModel;
+    import com.example.scmanager.Gerenciamento.ViewModel.ClienteViewModel;
     import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
     import com.google.android.material.textfield.TextInputEditText;
-    import com.google.android.material.textfield.TextInputLayout;
 
     public class TelaAdicionarCategoriaClienteServico extends BottomSheetDialogFragment implements View.OnClickListener {
 

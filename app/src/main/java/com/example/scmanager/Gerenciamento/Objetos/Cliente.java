@@ -1,4 +1,4 @@
-package com.example.scmanager.Cliente;
+package com.example.scmanager.Gerenciamento.Objetos;
 
 public class Cliente {
     private long id;

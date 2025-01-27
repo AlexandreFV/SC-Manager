@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.example.scmanager.Cliente.Cliente;
+import com.example.scmanager.Gerenciamento.Objetos.Cliente;
 
 import java.util.ArrayList;
 import java.util.List;

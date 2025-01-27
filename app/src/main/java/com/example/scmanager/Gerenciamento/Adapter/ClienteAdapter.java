@@ -1,17 +1,18 @@
-package com.example.scmanager.Cliente.Adapter;
+package com.example.scmanager.Gerenciamento.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.scmanager.Cliente.Cliente;
-import com.example.scmanager.Cliente.Tela.TelaGerenciamentoCliente;
+import com.example.scmanager.Gerenciamento.Objetos.Cliente;
+import com.example.scmanager.Gerenciamento.Tela.TelaGerenciamento;
 import com.example.scmanager.R;
 
 import java.util.List;
@@ -20,6 +21,17 @@ public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ClienteV
 
     private List<Cliente> listaClientes;
     private Context context;
+
+    private int[] coresBackground = {
+            R.color.color1,
+            R.color.color2,
+            R.color.color3,
+            R.color.color4,
+            R.color.color5,
+            R.color.color6,
+            R.color.color7,
+            R.color.color8
+    };
 
     public ClienteAdapter(Context context, List<Cliente> listaClientes) {
         this.context = context;
@@ -39,17 +51,16 @@ public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ClienteV
         holder.nomeTextView.setText(cliente.getNome());
         holder.telefoneTextView.setText(cliente.getTelefone());
 
-        // Alterna a cor de fundo do item
-        if (position % 2 == 0) {
-            holder.fundoItemTabelaCliente.setBackgroundColor(context.getResources().getColor(R.color.color_FFEDCC)); // Cor 1 (exemplo: FFEDCC)
-        } else {
-            holder.fundoItemTabelaCliente.setBackgroundColor(context.getResources().getColor(R.color.color_DCEEFB)); // Cor 2 (exemplo: DCEEFB)
-        }
+        // Define a cor do backgroundTint para imagePersonCard
+        int corIndex = position % coresBackground.length; // Garante que o índice esteja no intervalo do array
+        holder.imagePersonCard.setBackgroundTintList(
+                context.getResources().getColorStateList(coresBackground[corIndex])
+        );
 
         holder.lupaButton.setOnClickListener(v -> {
             // Passa o cliente clicado para a atividade ou fragmento
-            if (context instanceof TelaGerenciamentoCliente) {
-                ((TelaGerenciamentoCliente) context).onClienteClicked(cliente); // Chama o metodo na classe que exibe o RecyclerView
+            if (context instanceof TelaGerenciamento) {
+                ((TelaGerenciamento) context).onClienteClicked(cliente); // Chama o metodo na classe que exibe o RecyclerView
             }
         });
     }
@@ -71,15 +82,13 @@ public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ClienteV
         TextView nomeTextView;
         TextView telefoneTextView;
         ImageButton lupaButton;
-        View fundoItemTabelaCliente; // Referência para o fundo do item
-
+        ImageView imagePersonCard;
         public ClienteViewHolder(View itemView) {
             super(itemView);
             nomeTextView = itemView.findViewById(R.id.textNomeClienteTabela);
             telefoneTextView = itemView.findViewById(R.id.textTelefoneClienteTabela);
             lupaButton = itemView.findViewById(R.id.imageLupaDetalhes);
-            fundoItemTabelaCliente = itemView.findViewById(R.id.fundoItemTabelaCliente); // Inicializa a referência
-
+            imagePersonCard = itemView.findViewById(R.id.imagePersonCard);
         }
 
     }

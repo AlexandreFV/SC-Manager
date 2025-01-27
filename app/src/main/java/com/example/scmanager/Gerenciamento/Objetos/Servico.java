@@ -1,4 +1,4 @@
-package com.example.scmanager.Servico;
+package com.example.scmanager.Gerenciamento.Objetos;
 
 public class Servico {
     private Integer id;
