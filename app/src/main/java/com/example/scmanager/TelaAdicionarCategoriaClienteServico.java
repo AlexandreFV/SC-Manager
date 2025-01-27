@@ -12,6 +12,7 @@
 
     import androidx.constraintlayout.widget.ConstraintLayout;
 
+    import com.example.scmanager.Gerenciamento.ViewModel.CategoriaViewModel;
     import com.example.scmanager.Gerenciamento.ViewModel.ClienteViewModel;
     import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
     import com.google.android.material.textfield.TextInputEditText;
@@ -21,18 +22,21 @@
         private ConstraintLayout AddCategoria;
         private ConstraintLayout AddCliente;
         private ConstraintLayout AddServico;
-        public static int LayoutExibir = 0;
         private Button CategoriaAdd;
         private Button ClienteAdd;
         private Button ServicoAdd;
         private Button buttonSalvarCliente;
         private Button buttonSalvarCategoria;
         private ClienteViewModel clienteViewModel;
+        private CategoriaViewModel categoriaViewModel;
 
+        private String qualLayoutAddMostrar;
 
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             // Inflate o layout do Bottom Sheet
-            View view = inflater.inflate(R.layout.dialog_adicionar_cliente, container, false);
+            View view = inflater.inflate(R.layout.dialog_adicionar_registros, container, false);
+
+            qualLayoutAddMostrar = getArguments().getString("veioDe", "");
 
             AddCategoria = view.findViewById(R.id.FundoLayoutAddCategoria);
             AddCliente = view.findViewById(R.id.FundoLayoutAddCliente);
@@ -51,7 +55,7 @@
             buttonSalvarCliente = view.findViewById(R.id.buttonSalvarCliente);
             buttonSalvarCliente.setOnClickListener(this);
 
-            exibirLayout(LayoutExibir);
+            exibirLayout(qualLayoutAddMostrar);
 
             // Inicializa o controlador do banco (Singleton)
             return view;
@@ -61,36 +65,40 @@
             this.clienteViewModel = clienteViewModel;
         }
 
-        private void exibirLayout(int layoutAExibir)
+        public void setCategoriaViewModel(CategoriaViewModel categoriaViewModel) {
+            this.categoriaViewModel = categoriaViewModel;
+        }
+
+        private void exibirLayout(String layoutAExibir)
         {
-            if(layoutAExibir == 1)
+            if(layoutAExibir == "categoria")
             {
                 AddCategoria.setVisibility(View.VISIBLE);
                 AddCliente.setVisibility(View.GONE);
                 AddServico.setVisibility(View.GONE);
-            } else if(layoutAExibir == 2){
+            } else if(layoutAExibir == "cliente"){
                 AddCliente.setVisibility(View.VISIBLE);
                 AddCategoria.setVisibility(View.GONE);
                 AddServico.setVisibility(View.GONE);
-            }else if(layoutAExibir == 3){
+            }else if(layoutAExibir == "servico"){
                 AddServico.setVisibility(View.VISIBLE);
                 AddCategoria.setVisibility(View.GONE);
                 AddCliente.setVisibility(View.GONE);
             }
-            buttonSelecionado(LayoutExibir);
+            buttonSelecionado(layoutAExibir);
 
         }
 
-        private void buttonSelecionado(int layoutAExibir1) {
-            if (layoutAExibir1 == 1) {
+        private void buttonSelecionado(String layoutAExibir1) {
+            if (layoutAExibir1 == "categoria") {
                 alterarBackgroundGradualmente(CategoriaAdd); // Troca o background do botão de Categoria
                 alterarBackgroundGradualmenteParaSemGradiente(ClienteAdd);
                 alterarBackgroundGradualmenteParaSemGradiente(ServicoAdd);
-            } else if (layoutAExibir1 == 2) {
+            } else if (layoutAExibir1 == "cliente") {
                 alterarBackgroundGradualmente(ClienteAdd); // Troca o background do botão de Cliente
                 alterarBackgroundGradualmenteParaSemGradiente(CategoriaAdd);
                 alterarBackgroundGradualmenteParaSemGradiente(ServicoAdd);
-            } else if (layoutAExibir1 == 3) {
+            } else if (layoutAExibir1 == "servico") {
                 alterarBackgroundGradualmente(ServicoAdd); // Troca o background do botão de Serviço
                 alterarBackgroundGradualmenteParaSemGradiente(CategoriaAdd);
                 alterarBackgroundGradualmenteParaSemGradiente(ClienteAdd);
@@ -201,16 +209,20 @@
                 return;
             }
 
+            // Chama o ViewModel para adicionar o cliente
+            categoriaViewModel.adicionarCategoria(valorNomeCategoria);
+            dismiss();
+
         }
 
         @Override
         public void onClick(View view) {
             if (view.getId() == R.id.CategoriaButtonAdd) {
-                exibirLayout(LayoutExibir = 1);
+                exibirLayout(qualLayoutAddMostrar = "categoria");
             } else if (view.getId() == R.id.btnAddCliente) {
-                exibirLayout(LayoutExibir = 2);
+                exibirLayout(qualLayoutAddMostrar = "cliente");
             } else if (view.getId() == R.id.btnAddServico) {
-                exibirLayout(LayoutExibir = 3);
+                exibirLayout(qualLayoutAddMostrar = "servico");
             } else if(view.getId() == R.id.buttonSalvarCategoria){
                 criarCategoria(requireView()); // Passa a View principal do fragment
             } else if(view.getId() == R.id.buttonSalvarCliente){

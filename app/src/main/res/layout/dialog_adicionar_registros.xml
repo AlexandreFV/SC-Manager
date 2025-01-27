@@ -24,7 +24,6 @@
         android:layout_marginTop="40dp"
         android:layout_marginEnd="32dp"
         android:background="@drawable/button_add_layout_no_gradiente"
-        android:drawableStart="@drawable/categorias"
         android:text="Categoria"
         app:layout_constraintEnd_toStartOf="@+id/btnAddCliente"
         app:layout_constraintStart_toStartOf="parent"

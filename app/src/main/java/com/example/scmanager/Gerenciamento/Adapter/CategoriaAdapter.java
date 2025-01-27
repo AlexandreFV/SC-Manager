@@ -11,15 +11,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.scmanager.Gerenciamento.Objetos.Categoria;
 import com.example.scmanager.Gerenciamento.Objetos.Cliente;
 import com.example.scmanager.Gerenciamento.Tela.TelaGerenciamento;
 import com.example.scmanager.R;
 
 import java.util.List;
 
-public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ClienteViewHolder> {
+public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.CategoriaViewHolder> {
 
-    private List<Cliente> listaClientes;
+    private List<Categoria> ListaCategorias;
     private Context context;
 
     private int[] coresBackground = {
@@ -33,23 +34,22 @@ public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ClienteV
             R.color.color8
     };
 
-    public ClienteAdapter(Context context, List<Cliente> listaClientes) {
+    public CategoriaAdapter(Context context, List<Categoria> ListaCategorias) {
         this.context = context;
-        this.listaClientes = listaClientes;
+        this.ListaCategorias = ListaCategorias;
     }
 
     @NonNull
     @Override
-    public ClienteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(context).inflate(R.layout.item_lista_cliente, parent, false);
-        return new ClienteViewHolder(itemView);
+    public CategoriaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(context).inflate(R.layout.item_lista_categoria, parent, false);
+        return new CategoriaViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ClienteViewHolder holder, int position) {
-        Cliente cliente = listaClientes.get(position);
-        holder.nomeTextView.setText(cliente.getNome());
-        holder.telefoneTextView.setText(cliente.getTelefone());
+    public void onBindViewHolder(@NonNull CategoriaViewHolder holder, int position) {
+        Categoria categoria = ListaCategorias.get(position);
+        holder.nomeTextView.setText(categoria.getNome());
 
         // Define a cor do backgroundTint para imagePersonCard
         int corIndex = position % coresBackground.length; // Garante que o índice esteja no intervalo do array
@@ -60,7 +60,7 @@ public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ClienteV
         holder.lupaButton.setOnClickListener(v -> {
             // Passa o cliente clicado para a atividade ou fragmento
             if (context instanceof TelaGerenciamento) {
-                ((TelaGerenciamento) context).onClienteClicked(cliente); // Chama o metodo na classe que exibe o RecyclerView
+                ((TelaGerenciamento) context).onCategoriaClicked(categoria); // Chama o metodo na classe que exibe o RecyclerView
             }
         });
     }
@@ -69,24 +69,22 @@ public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ClienteV
 
     @Override
     public int getItemCount() {
-        return listaClientes != null ? listaClientes.size() : 0;
+        return ListaCategorias != null ? ListaCategorias.size() : 0;
     }
 
     // Metodo para atualizar a lista de clientes
-    public void setClientes(List<Cliente> listaClientes) {
-        this.listaClientes = listaClientes;
+    public void setCategoria(List<Categoria> listaCategorias) {
+        this.ListaCategorias = listaCategorias;
         notifyDataSetChanged(); // Notifica o RecyclerView sobre as mudanças
     }
 
-    public static class ClienteViewHolder extends RecyclerView.ViewHolder {
+    public static class CategoriaViewHolder extends RecyclerView.ViewHolder {
         TextView nomeTextView;
-        TextView telefoneTextView;
         ImageButton lupaButton;
         ImageView imagePersonCard;
-        public ClienteViewHolder(View itemView) {
+        public CategoriaViewHolder(View itemView) {
             super(itemView);
             nomeTextView = itemView.findViewById(R.id.textNomeCategoriaTabela);
-            telefoneTextView = itemView.findViewById(R.id.textTelefoneClienteTabela);
             lupaButton = itemView.findViewById(R.id.imageLupaDetalhes);
             imagePersonCard = itemView.findViewById(R.id.imagePersonCard);
         }
@@ -94,14 +92,14 @@ public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ClienteV
     }
 
     // Metodo para atualizar os dados
-    public void atualizarClientes(List<Cliente> novosClientes) {
-        this.listaClientes = novosClientes;
+    public void atualizarCategorias(List<Categoria> novasCategorias) {
+        this.ListaCategorias = novasCategorias;
         notifyDataSetChanged();
     }
 
-    public void setData(List<Cliente> clientes) {
-        this.listaClientes.clear();
-        this.listaClientes.addAll(clientes);
+    public void setData(List<Categoria> categorias) {
+        this.ListaCategorias.clear();
+        this.ListaCategorias.addAll(categorias);
         notifyDataSetChanged();
     }
 }

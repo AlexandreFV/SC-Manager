@@ -22,10 +22,15 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.scmanager.BancoDeDados.CategoriaRepository;
 import com.example.scmanager.BancoDeDados.ClienteRepository;
+import com.example.scmanager.Gerenciamento.Adapter.CategoriaAdapter;
 import com.example.scmanager.Gerenciamento.Adapter.ClienteAdapter;
+import com.example.scmanager.Gerenciamento.Objetos.Categoria;
 import com.example.scmanager.Gerenciamento.Objetos.Cliente;
+import com.example.scmanager.Gerenciamento.Tela.Categoria.BottomSheetDetalhesCategoria;
 import com.example.scmanager.Gerenciamento.Tela.Cliente.BottomSheetDetalhesCliente;
+import com.example.scmanager.Gerenciamento.ViewModel.CategoriaViewModel;
 import com.example.scmanager.Gerenciamento.ViewModel.ClienteViewModel;
 import com.example.scmanager.R;
 import com.example.scmanager.TelaAdicionarCategoriaClienteServico;
@@ -58,7 +63,8 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
 
     private ClienteAdapter clienteAdapter;
     private ClienteViewModel clienteViewModel;
-
+    private CategoriaViewModel categoriaViewModel;
+    private CategoriaAdapter categoriaAdapter;
 
     //Button para trocar a exibicao do Layout
     private Button buttonCategoria;
@@ -102,14 +108,39 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
                 if (itemCount == 0) {
                     // Se não houver itens, defina a altura do RecyclerView como 0
                     recyclerViewClientes.getLayoutParams().height = 0;
-                } else {
-                    // Se houver itens, defina a altura do RecyclerView com base no número de itens
-                    recyclerViewClientes.getLayoutParams().height = Math.min(itemCount * itemHeight, dpToPx(500)); // Limite de 500dp
                 }
                 recyclerViewClientes.requestLayout();
             }
         });
 
+
+        // Obter instância do banco de dados e do repositório
+        CategoriaRepository categoriaRepository = new CategoriaRepository(this);
+        categoriaViewModel = new ViewModelProvider(this).get(CategoriaViewModel.class);
+
+        // Adicionando o Observer para o LiveData
+        categoriaViewModel.getListaCategorias().observe(this, new Observer<List<Categoria>>() {
+            @Override
+            public void onChanged(List<Categoria> categorias) {
+                // Atualize o Adapter com a nova lista de clientes
+                if (categoriaAdapter == null) {
+                    categoriaAdapter = new CategoriaAdapter(TelaGerenciamento.this, categorias);
+                    recyclerViewCategorias.setAdapter(categoriaAdapter);
+                } else {
+                    categoriaAdapter.setCategoria(categorias); // Supondo que o Adapter tenha um metodo para atualizar a lista
+                }
+
+                // Atualiza a altura do RecyclerView com base na quantidade de itens
+                int itemCount = categorias.size();
+                int itemHeight = dpToPx(100); // Convertendo 100dp para pixels
+
+                if (itemCount == 0) {
+                    // Se não houver itens, defina a altura do RecyclerView como 0
+                    recyclerViewCategorias.getLayoutParams().height = 0;
+                }
+                recyclerViewCategorias.requestLayout();
+            }
+        });
     }
 
     private void referenciarLayout()
@@ -391,8 +422,11 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
         } else if (view.getId() == R.id.imageAdicionarLista) {
             Toast.makeText(getBaseContext(), "apertou em adicionar", Toast.LENGTH_SHORT).show();
             TelaAdicionarCategoriaClienteServico fragment = new TelaAdicionarCategoriaClienteServico();
-            TelaAdicionarCategoriaClienteServico.LayoutExibir = 2;
+            Bundle bundle = new Bundle();
+            bundle.putString("veioDe",vaiPara);
             fragment.setClienteViewModel(clienteViewModel);
+            fragment.setCategoriaViewModel(categoriaViewModel);
+            fragment.setArguments(bundle);
             fragment.show(getSupportFragmentManager(), fragment.getTag());
 
         } else if (view.getId() == R.id.imageFiltrarLista) {
@@ -596,6 +630,21 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
         BottomSheetDetalhesCliente fragment = new BottomSheetDetalhesCliente();
         fragment.setArguments(bundle);
         fragment.setClienteViewModel(clienteViewModel);
+        fragment.show(getSupportFragmentManager(), fragment.getTag());
+    }
+
+    public void onCategoriaClicked(Categoria categoria) {
+        long categoriaId = categoria.getId();
+        String categoriaNome = categoria.getNome();
+
+        Bundle bundle = new Bundle();
+        bundle.putLong("categoriaId", categoriaId);
+        bundle.putString("categoriaNome", categoriaNome);
+
+        // Exemplo: Você pode iniciar uma nova Activity com os detalhes do cliente
+        BottomSheetDetalhesCategoria fragment = new BottomSheetDetalhesCategoria();
+        fragment.setArguments(bundle);
+        fragment.setCategoriaViewModel(categoriaViewModel);
         fragment.show(getSupportFragmentManager(), fragment.getTag());
     }
 

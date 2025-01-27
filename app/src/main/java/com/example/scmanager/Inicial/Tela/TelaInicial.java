@@ -54,8 +54,6 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
 
     private View FundoGradiente;
 
-    private ImageView LogoApp;
-
     private TextView TelaInicial;
     private int getOriginalWidthGradiente;
     private int getOriginalHeightGradiente;
@@ -102,11 +100,9 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         {
             FundoGradiente = findViewById(R.id.FundoGradiente);
             GrupoIcones = findViewById(R.id.GrupoIcones);
-            LogoApp = findViewById(R.id.LogoApp);
             TelaInicial = findViewById(R.id.TelaInicial);
 
             deixarInvisivelGrupoIcones(GrupoIcones);
-            deixarInvisivelGrupoIcones(LogoApp);
             deixarInvisivelGrupoIcones(TelaInicial);
 
             AnimacaoDiminuirGradiente();
@@ -406,7 +402,6 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
                     deixarVisivelGrupoIcones(GrupoIcones);
-                    deixarVisivelGrupoIcones(LogoApp);
                     deixarVisivelGrupoIcones(TelaInicial);
                     AnimaçãoSubirIconesInicio(); // Inicia a animação dos ícones
                 }
