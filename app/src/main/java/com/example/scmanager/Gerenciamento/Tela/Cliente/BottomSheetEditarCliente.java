@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import androidx.lifecycle.ViewModelProvider;
+
 import com.example.scmanager.BancoDeDados.ClienteRepository;
 import com.example.scmanager.Gerenciamento.Objetos.Cliente;
 import com.example.scmanager.Gerenciamento.ViewModel.ClienteViewModel;
@@ -65,13 +67,10 @@ public class BottomSheetEditarCliente extends BottomSheetDialogFragment implemen
                 Log.d("BottomSheetEditarCliente", "Cliente: ID=" + cliente.getId() + ", Nome=" + cliente.getNome() + ", Telefone=" + cliente.getTelefone());
             }
         });
+        clienteViewModel = new ViewModelProvider(requireActivity()).get(ClienteViewModel.class);
 
         // Inicializa o controlador do banco (Singleton)
         return view;
-    }
-
-    public void setClienteViewModel(ClienteViewModel clienteViewModel) {
-        this.clienteViewModel = clienteViewModel;
     }
 
     @Override

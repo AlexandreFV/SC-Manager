@@ -6,5 +6,14 @@
         <!-- Opcional: Mudar o modo de navegação também (barra de navegação) -->
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
-    
+
+    <style name="CustomTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">#288699</item> <!-- Cor da borda quando focado -->
+        <item name="boxStrokeWidth">2dp</item>         <!-- Espessura da borda padrão -->
+        <item name="boxStrokeWidthFocused">2dp</item> <!-- Espessura da borda focada -->
+        <item name="android:textColorHint">@color/black</item> <!-- Cor do hint -->
+        <item name="hintTextColor">@color/black</item> <!-- Cor do hint flutuante -->
+        <item name="boxBackgroundColor">@android:color/transparent</item> <!-- Cor de fundo -->
+    </style>
+
 </resources>

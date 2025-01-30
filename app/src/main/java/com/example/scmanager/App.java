@@ -1,6 +1,7 @@
 package com.example.scmanager;
 
 import android.app.Application;
+import android.os.AsyncTask;
 
 import com.example.scmanager.BancoDeDados.ControladorBancoDeDados;
 
@@ -19,4 +20,5 @@ public class App extends Application {
         // Fecha o banco de dados quando a aplicação for encerrada
         ControladorBancoDeDados.onDestroy();
     }
+
 }

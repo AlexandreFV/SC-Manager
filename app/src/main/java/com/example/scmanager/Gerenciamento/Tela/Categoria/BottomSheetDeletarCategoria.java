@@ -8,8 +8,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.lifecycle.ViewModelProvider;
+
 import com.example.scmanager.Gerenciamento.ViewModel.CategoriaViewModel;
 import com.example.scmanager.Gerenciamento.ViewModel.ClienteViewModel;
+import com.example.scmanager.Gerenciamento.ViewModel.ServicoViewModel;
 import com.example.scmanager.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -47,6 +50,7 @@ public class BottomSheetDeletarCategoria extends BottomSheetDialogFragment imple
         ButtonCancelarExclusao.setOnClickListener(this);
         idCategoria = getArguments().getLong("categoriaId", -1);
         nomeCategoria = getArguments().getString("categoriaNome", "");
+        categoriaViewModel = new ViewModelProvider(requireActivity()).get(CategoriaViewModel.class);
 
         if (idCategoria != -1) {
             nomeCategoriaText.setText(nomeCategoria);
@@ -56,9 +60,6 @@ public class BottomSheetDeletarCategoria extends BottomSheetDialogFragment imple
         return view;
     }
 
-    public void setCategoriaViewModel(CategoriaViewModel categoriaViewModel) {
-        this.categoriaViewModel = categoriaViewModel;
-    }
 
     @Override
     public void onClick(View v) {

@@ -32,4 +32,6 @@ public class Categoria {
     public String toString() {
         return nome;
     }
+
 }
+

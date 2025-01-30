@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import androidx.lifecycle.ViewModelProvider;
+
 import com.example.scmanager.BancoDeDados.CategoriaRepository;
 import com.example.scmanager.BancoDeDados.ClienteRepository;
 import com.example.scmanager.Gerenciamento.Objetos.Categoria;
@@ -50,6 +52,8 @@ public class BottomSheetEditarCategoria extends BottomSheetDialogFragment implem
         idCategoria = getArguments().getLong("categoriaId", -1);
         nomeCategoria = getArguments().getString("categoriaNome", "");
 
+        categoriaViewModel = new ViewModelProvider(requireActivity()).get(CategoriaViewModel.class);
+
         if (idCategoria != -1) {
             nomeCategoriaInput.setText(nomeCategoria);
         }
@@ -65,10 +69,6 @@ public class BottomSheetEditarCategoria extends BottomSheetDialogFragment implem
 
         // Inicializa o controlador do banco (Singleton)
         return view;
-    }
-
-    public void setCategoriaViewModel(CategoriaViewModel categoriaViewModel) {
-        this.categoriaViewModel = categoriaViewModel;
     }
 
     @Override

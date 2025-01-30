@@ -9,8 +9,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.scmanager.Gerenciamento.DiffCallback.CategoriaDiffCallback;
+import com.example.scmanager.Gerenciamento.DiffCallback.ClienteDiffCallback;
+import com.example.scmanager.Gerenciamento.Objetos.Categoria;
 import com.example.scmanager.Gerenciamento.Objetos.Cliente;
 import com.example.scmanager.Gerenciamento.Tela.TelaGerenciamento;
 import com.example.scmanager.R;
@@ -73,35 +78,42 @@ public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ClienteV
     }
 
     // Metodo para atualizar a lista de clientes
-    public void setClientes(List<Cliente> listaClientes) {
+    public void setCliente(List<Cliente> listaClientes) {
+        // Use o DiffUtil para comparar as listas e otimizar as atualizações
+        ClienteDiffCallback diffCallback = new ClienteDiffCallback(this.listaClientes, listaClientes);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
+
         this.listaClientes = listaClientes;
-        notifyDataSetChanged(); // Notifica o RecyclerView sobre as mudanças
+
+        // Aplica as mudanças ao RecyclerView
+        diffResult.dispatchUpdatesTo(this);  // Notifica o RecyclerView sobre as mudanças
     }
+
 
     public static class ClienteViewHolder extends RecyclerView.ViewHolder {
         TextView nomeTextView;
         TextView telefoneTextView;
         ImageButton lupaButton;
         ImageView imagePersonCard;
+
+        ConstraintLayout layoutCard;
         public ClienteViewHolder(View itemView) {
             super(itemView);
             nomeTextView = itemView.findViewById(R.id.textNomeCategoriaTabela);
             telefoneTextView = itemView.findViewById(R.id.textTelefoneClienteTabela);
             lupaButton = itemView.findViewById(R.id.imageLupaDetalhes);
             imagePersonCard = itemView.findViewById(R.id.imagePersonCard);
+            layoutCard = itemView.findViewById(R.id.layoutCard);
         }
 
     }
 
     // Metodo para atualizar os dados
     public void atualizarClientes(List<Cliente> novosClientes) {
-        this.listaClientes = novosClientes;
-        notifyDataSetChanged();
+        setCliente(novosClientes);
     }
 
     public void setData(List<Cliente> clientes) {
-        this.listaClientes.clear();
-        this.listaClientes.addAll(clientes);
-        notifyDataSetChanged();
+        setCliente(clientes);
     }
 }

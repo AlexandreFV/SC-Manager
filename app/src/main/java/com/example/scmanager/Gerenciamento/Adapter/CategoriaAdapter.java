@@ -9,10 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.scmanager.Gerenciamento.DiffCallback.CategoriaDiffCallback;
 import com.example.scmanager.Gerenciamento.Objetos.Categoria;
-import com.example.scmanager.Gerenciamento.Objetos.Cliente;
 import com.example.scmanager.Gerenciamento.Tela.TelaGerenciamento;
 import com.example.scmanager.R;
 
@@ -65,18 +66,28 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.Cate
         });
     }
 
-
-
     @Override
     public int getItemCount() {
         return ListaCategorias != null ? ListaCategorias.size() : 0;
     }
 
-    // Metodo para atualizar a lista de clientes
-    public void setCategoria(List<Categoria> listaCategorias) {
-        this.ListaCategorias = listaCategorias;
-        notifyDataSetChanged(); // Notifica o RecyclerView sobre as mudanças
+    public List<Categoria> getCategoria() {
+        return ListaCategorias;
     }
+
+    public void setCategoria(List<Categoria> listaCategorias) {
+        // Use o DiffUtil para comparar as listas e otimizar as atualizações
+        CategoriaDiffCallback diffCallback = new CategoriaDiffCallback(this.ListaCategorias, listaCategorias);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
+
+        // Atualiza a lista de categorias
+        this.ListaCategorias = listaCategorias;
+
+        // Aplica as mudanças ao RecyclerView
+        diffResult.dispatchUpdatesTo(this);  // Notifica o RecyclerView sobre as mudanças
+    }
+
+
 
     public static class CategoriaViewHolder extends RecyclerView.ViewHolder {
         TextView nomeTextView;
@@ -93,13 +104,11 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.Cate
 
     // Metodo para atualizar os dados
     public void atualizarCategorias(List<Categoria> novasCategorias) {
-        this.ListaCategorias = novasCategorias;
-        notifyDataSetChanged();
+        setCategoria(novasCategorias); // Use o metodo `setCategoria` para atualizar de forma otimizada
     }
 
     public void setData(List<Categoria> categorias) {
-        this.ListaCategorias.clear();
-        this.ListaCategorias.addAll(categorias);
-        notifyDataSetChanged();
+        setCategoria(categorias);  // Use o `setCategoria` em vez de limpar e adicionar diretamente
     }
+
 }

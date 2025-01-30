@@ -1,9 +1,18 @@
 package com.example.scmanager.BancoDeDados;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Looper;
+
+import com.example.scmanager.Gerenciamento.Objetos.Servico;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ServicoRepository {
 
@@ -20,9 +29,12 @@ public class ServicoRepository {
                     "FOREIGN KEY (tipoServico) REFERENCES Categorias (id) ON DELETE CASCADE)";
 
     private SQLiteDatabase banco;
+    private final ExecutorService executor;
 
-    public ServicoRepository(SQLiteDatabase db){
-        banco = db;
+    public ServicoRepository(Context context){
+        ControladorBancoDeDados db = ControladorBancoDeDados.getInstance(context);
+        banco = db.getWritableDatabase();  // Certifique-se de que o banco está sendo obtido corretamente
+        executor = Executors.newSingleThreadExecutor(); // Usando um executor simples
     }
 
     private boolean existeRegistro(String tabela, String coluna, String valor) {
@@ -32,150 +44,181 @@ public class ServicoRepository {
         }
     }
 
-    public boolean AdicionarCategoria(String nome) {
-        banco.beginTransaction();
-        try {
-            if (existeRegistro("Categorias", "nome", nome)) {
-                throw new IllegalArgumentException("Já existe uma categoria com o mesmo nome.");
+    public void AdicionarServicoAsync(Integer idCliente, Integer idCategoria, Float valor, String dataAceiteServ, String estado, String dataPagOuEstipu, ServicoCallback callback) {
+        executor.submit(() -> {
+            if (idCategoria == 0 || idCliente == 0 || valor == 0 || dataAceiteServ.isEmpty() || dataPagOuEstipu.isEmpty() || estado.isEmpty()) {
+                throw new IllegalArgumentException("Preencha todos os campos.");
             }
+            banco.beginTransaction();
+            try {
 
-            ContentValues valores = new ContentValues();
-            valores.put("nome", nome);
+                if (!existeRegistro("Clientes", "id", String.valueOf(idCliente))) {
+                    throw new IllegalArgumentException("Cliente com o id " + idCliente + " não encontrado.");
+                }
 
-            banco.insert("Categorias", null, valores);
-            banco.setTransactionSuccessful();
-            return true;
-        } catch (Exception e) {
-            Log.e("DatabaseError", "Erro ao adicionar categoria", e);
-            return false;
-        } finally {
-            banco.endTransaction();
-        }
+                if (!existeRegistro("Categorias", "id", String.valueOf(idCategoria))) {
+                    throw new IllegalArgumentException("Tipo de categoria com o id " + idCategoria + " não encontrado.");
+                }
+
+                ContentValues valores = new ContentValues();
+                valores.put("idCliente", idCliente);
+                valores.put("tipoServico", idCategoria);
+                valores.put("valor", valor);
+                valores.put("dataAceiteServico", dataAceiteServ);
+                if (estado.equals("Pago")) {
+                    Integer pago = 1;
+                    valores.put("estado", pago);
+                } else if (estado.equals("Não Pago")) {
+                    Integer pago = 0;
+                    valores.put("estado", pago);
+                }
+                valores.put("dataPagamento", dataPagOuEstipu);
+
+                long result = banco.insert("Servicos", null, valores);
+
+                if (result == -1) {
+                    throw new Exception("Erro ao inserir categoria.");
+                }
+
+                banco.setTransactionSuccessful();
+                callback.onResult(result); // Retorna o ID da categoria inserida
+            } catch (Exception e) {
+                e.printStackTrace();
+                callback.onResult(-1); // Falha na inserção
+            } finally {
+                banco.endTransaction();
+            }
+        });
     }
 
-    public boolean EditarCategoria(int idCategoria, String nome) {
-        banco.beginTransaction();
-        try {
-            if (!existeRegistro("Categorias", "id", String.valueOf(idCategoria))) {
-                throw new IllegalArgumentException("Não existe uma categoria com id: " + idCategoria);
+    public void EditarServicoAsync(Integer idServico,Integer idCliente, Integer idCategoria, Float valor, String dataAceiteServ, String estado, String dataPagOuEstipu, ServicoCallback callback) {
+        executor.submit(() -> {
+
+            if (idCategoria == 0 || idCliente == 0 || valor == 0 || dataAceiteServ.isEmpty() || dataPagOuEstipu.isEmpty() || estado.isEmpty()) {
+                throw new IllegalArgumentException("Preencha todos os campos.");
             }
 
-            if (existeRegistro("Categorias", "nome", nome)) {
-                throw new IllegalArgumentException("Já existe uma categoria com o mesmo nome.");
+            banco.beginTransaction();
+            try {
+                if (!existeRegistro("Servicos", "id", String.valueOf(idServico))) {
+                    throw new IllegalArgumentException("Não existe esse serviço.");
+                }
+
+                if (!existeRegistro("Clientes", "id", String.valueOf(idCliente))) {
+                    throw new IllegalArgumentException("Não existe esse cliente.");
+                }
+
+                if (!existeRegistro("Categorias", "id", String.valueOf(idCategoria))) {
+                    throw new IllegalArgumentException("Não existe esse tipo de categoria.");
+                }
+
+                ContentValues valores = new ContentValues();
+                valores.put("idCliente", idCliente);
+                valores.put("tipoServico", idCategoria);
+                valores.put("valor", valor);
+                valores.put("dataAceiteServico", dataAceiteServ);
+                if (estado.equals("Pago")) {
+                    Integer pago = 1;
+                    valores.put("estado", pago);
+                } else if (estado.equals("Não Pago")) {
+                    Integer pago = 0;
+                    valores.put("estado", pago);
+                }
+                valores.put("dataPagamento", dataPagOuEstipu);
+                int linhasAfetadas = banco.update("Servicos", valores, "id = ?", new String[]{String.valueOf(idServico)});
+                if (linhasAfetadas > 0) {
+                    banco.setTransactionSuccessful();
+                    callback.onResult(1); // Sucesso
+                } else {
+                    callback.onResult(0); // Falha na atualização
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                callback.onResult(0); // Falha
+            } finally {
+                banco.endTransaction();
             }
-
-            ContentValues valores = new ContentValues();
-            valores.put("nome", nome);
-
-            banco.update("Categorias", valores, "id = ?", new String[]{String.valueOf(idCategoria)});
-            banco.setTransactionSuccessful();
-            return true;
-        } catch (Exception e) {
-            Log.e("DatabaseError", "Erro ao editar categoria", e);
-            return false;
-        } finally {
-            banco.endTransaction();
-        }
+        });
     }
 
-    public boolean ExcluirCategoria(int id) {
-        banco.beginTransaction();
-        try {
-            if (!existeRegistro("Categorias", "id", String.valueOf(id))) {
-                throw new IllegalArgumentException("Não existe essa categoria.");
+    public void ExcluirServicoAsync(int id, ServicoCallback callback) {
+        executor.submit(() -> {
+            if (id == 0) {
+                throw new IllegalArgumentException("O ID do serviço é obrigatório.");
             }
 
-            banco.delete("Categorias", "id = ?", new String[]{String.valueOf(id)});
-            banco.setTransactionSuccessful();
-            return true;
-        } catch (Exception e) {
-            Log.e("DatabaseError", "Erro ao excluir categoria", e);
-            return false;
-        } finally {
-            banco.endTransaction();
-        }
+            banco.beginTransaction();
+            Cursor cursor = null;
+
+            try {
+                if (!existeRegistro("Servicos", "id", String.valueOf(id))) {
+                    throw new IllegalArgumentException("Não existe esse serviço.");
+                }
+
+                int linhasAfetadas = banco.delete("Servicos", "id = ?", new String[]{String.valueOf(id)});                if (linhasAfetadas > 0) {
+                    banco.setTransactionSuccessful();
+                    callback.onResult(1); // Sucesso
+                } else {
+                    callback.onResult(0); // Falha
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                callback.onResult(0); // Falha devido a exceção
+            } finally {
+                banco.endTransaction();
+            }
+        });
     }
 
-    public boolean AdicionarServico(int tipoServico, int idCliente, double valorPagamento, String dataAceiteServico, int estadoPagamento, String dataPagamento) {
-        banco.beginTransaction();
-        try {
-            if (!existeRegistro("Clientes", "id", String.valueOf(idCliente))) {
-                throw new IllegalArgumentException("Cliente com o id " + idCliente + " não encontrado.");
+    public void CarregarServicosAsync(ServicoListCallback callback) {
+        executor.submit(() -> {
+            List<Servico> servicos = new ArrayList<>();
+            String query = "SELECT id, tipoServico, idCliente,valor,dataAceiteServico,estado,dataPagamento FROM Servicos";
+
+            try (Cursor cursor = banco.rawQuery(query, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    do {
+                        int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+                        int tipoServico = cursor.getInt(cursor.getColumnIndexOrThrow("tipoServico"));
+                        int idCliente = cursor.getInt(cursor.getColumnIndexOrThrow("idCliente"));
+                        Double valor = cursor.getDouble(cursor.getColumnIndexOrThrow("valor"));
+                        String dataAceiteServico = cursor.getString(cursor.getColumnIndexOrThrow("dataAceiteServico"));
+                        int estado = cursor.getInt(cursor.getColumnIndexOrThrow("estado"));
+                        String dataPagamento = cursor.getString(cursor.getColumnIndexOrThrow("dataPagamento"));
+
+                        servicos.add(new Servico(id, tipoServico, idCliente,valor, dataAceiteServico, estado, dataPagamento));
+                    } while (cursor.moveToNext());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
-            if (!existeRegistro("Categorias", "id", String.valueOf(tipoServico))) {
-                throw new IllegalArgumentException("Tipo de serviço com o id " + tipoServico + " não encontrado.");
-            }
-
-            ContentValues valores = new ContentValues();
-            valores.put("tipoServico", tipoServico);
-            valores.put("idCliente", idCliente);
-            valores.put("valor", valorPagamento);
-            valores.put("dataAceiteServico", dataAceiteServico);
-            valores.put("estado", estadoPagamento);
-            valores.put("dataPagamento", dataPagamento);
-
-            banco.insert("Servicos", null, valores);
-            banco.setTransactionSuccessful();
-            return true;
-        } catch (Exception e) {
-            Log.e("DatabaseError", "Erro ao adicionar serviço", e);
-            return false;
-        } finally {
-            banco.endTransaction();
-        }
+            // Chama o callback na thread principal para atualizar a UI
+            new Handler(Looper.getMainLooper()).post(() -> callback.onServicosLoaded(servicos));
+        });
     }
 
-    public boolean EditarServico(int idServico, int tipoServico, int idCliente, double valorPagamento, String dataAceiteServico, int estadoPagamento, String dataPagamento) {
-        banco.beginTransaction();
-        try {
-            if (!existeRegistro("Servicos", "id", String.valueOf(idServico))) {
-                throw new IllegalArgumentException("Não existe esse serviço.");
-            }
-
-            if (!existeRegistro("Clientes", "id", String.valueOf(idCliente))) {
-                throw new IllegalArgumentException("Não existe esse cliente.");
-            }
-
-            if (!existeRegistro("Categorias", "id", String.valueOf(tipoServico))) {
-                throw new IllegalArgumentException("Não existe esse tipo de serviço.");
-            }
-
-            ContentValues valores = new ContentValues();
-            valores.put("tipoServico", tipoServico);
-            valores.put("idCliente", idCliente);
-            valores.put("valor", valorPagamento);
-            valores.put("dataAceiteServico", dataAceiteServico);
-            valores.put("estado", estadoPagamento);
-            valores.put("dataPagamento", dataPagamento);
-
-            banco.update("Servicos", valores, "id = ?", new String[]{String.valueOf(idServico)});
-            banco.setTransactionSuccessful();
-            return true;
-        } catch (Exception e) {
-            Log.e("DatabaseError", "Erro ao editar serviço", e);
-            return false;
-        } finally {
-            banco.endTransaction();
-        }
+    // Callback para operações de categoria
+    public interface ServicoCallback {
+        void onResult(long result); // 1 = sucesso, 0 = falha, -1 = já existe
     }
 
-    public boolean ExcluirServico(int id) {
-        banco.beginTransaction();
-        try {
-            if (!existeRegistro("Servicos", "id", String.valueOf(id))) {
-                throw new IllegalArgumentException("Não existe esse serviço.");
+    public String getNomeCategoriaById(int idCategoria) {
+        String nomeCategoria = "Categoria desconhecida";
+        String query = "SELECT nome FROM Categorias WHERE id = ?";
+        try (Cursor cursor = banco.rawQuery(query, new String[]{String.valueOf(idCategoria)})) {
+            if (cursor != null && cursor.moveToFirst()) {
+                nomeCategoria = cursor.getString(cursor.getColumnIndex("nome"));
             }
-
-            banco.delete("Servicos", "id = ?", new String[]{String.valueOf(id)});
-            banco.setTransactionSuccessful();
-            return true;
         } catch (Exception e) {
-            Log.e("DatabaseError", "Erro ao excluir serviço", e);
-            return false;
-        } finally {
-            banco.endTransaction();
+            e.printStackTrace();
         }
+        return nomeCategoria;
+    }
+
+    // Callback para carregar lista de categorias
+    public interface ServicoListCallback {
+        void onServicosLoaded(List<Servico> servicos);
     }
 
 }

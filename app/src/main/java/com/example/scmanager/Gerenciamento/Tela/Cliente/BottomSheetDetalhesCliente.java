@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.lifecycle.ViewModelProvider;
+
 import com.example.scmanager.Gerenciamento.ViewModel.ClienteViewModel;
 import com.example.scmanager.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -42,13 +44,10 @@ public class BottomSheetDetalhesCliente extends BottomSheetDialogFragment implem
             nomeClienteText.setText(nomeCliente);
             telefoneClienteText.setText(telefoneCliente);
         }
+        clienteViewModel = new ViewModelProvider(requireActivity()).get(ClienteViewModel.class);
 
         // Inicializa o controlador do banco (Singleton)
         return view;
-    }
-
-    public void setClienteViewModel(ClienteViewModel clienteViewModel) {
-        this.clienteViewModel = clienteViewModel;
     }
 
     @Override
@@ -63,7 +62,6 @@ public class BottomSheetDetalhesCliente extends BottomSheetDialogFragment implem
             // Cria o BottomSheetDeletarCliente e passa os dados
             BottomSheetDeletarCliente fragment = new BottomSheetDeletarCliente();
             fragment.setArguments(bundle); // Passa os dados para o fragment
-            fragment.setClienteViewModel(clienteViewModel);
             fragment.setOnExclusaoConfirmadaListener(this); // Defina o listener
             // Exibe o BottomSheetDeletarCliente
             fragment.show(getParentFragmentManager(), fragment.getTag());
@@ -77,7 +75,6 @@ public class BottomSheetDetalhesCliente extends BottomSheetDialogFragment implem
             // Cria o BottomSheetDeletarCliente e passa os dados
             BottomSheetEditarCliente fragment = new BottomSheetEditarCliente();
             fragment.setArguments(bundle); // Passa os dados para o fragment
-            fragment.setClienteViewModel(clienteViewModel);
             fragment.setOnEdicaoConfirmadaListener(this); // Defina o listener
             // Exibe o BottomSheetDeletarCliente
             fragment.show(getParentFragmentManager(), fragment.getTag());

@@ -20,303 +20,329 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:fontFamily="@font/montserrat_bold"
         android:text="Tela Inicial"
         android:textColor="#000000"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/GrupoIcones"
+        app:layout_constraintBottom_toTopOf="@+id/scrollView"
         app:layout_constraintEnd_toEndOf="@+id/FundoGradiente"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/GrupoIcones"
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="90dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:fadingEdge="vertical"
+        android:fillViewport="true"
+        android:scrollbars="vertical"
         app:layout_constraintTop_toTopOf="parent">
 
-        <View
-            android:id="@+id/QuadradoGrafico"
-            android:layout_width="0dp"
-            android:layout_height="170dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="32dp"
-            android:background="@drawable/quadrado_grafico_inicio_parte_cima"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
-        <com.github.mikephil.charting.charts.PieChart
-            android:id="@+id/grafico"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="64dp"
-            android:layout_marginEnd="64dp"
-            app:layout_constraintBottom_toTopOf="@+id/linhaQuadradoGrafico"
-            app:layout_constraintEnd_toEndOf="@+id/QuadradoGrafico"
-            app:layout_constraintStart_toStartOf="@+id/QuadradoGrafico"
-            app:layout_constraintTop_toBottomOf="@+id/periodo" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/GrupoQuadradoBaixoGrafico"
+            android:id="@+id/GrupoIcones"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginEnd="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/QuadradoGrafico">
-
-
-            <ViewSwitcher
-                android:id="@+id/SwitcherDasInfosDoGrafico"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_gravity="center"
-                android:background="#FFFFFF"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/quadradoBaixoGrafico"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0">
-
-                <!-- Layout para o menu lista de dados do grafico -->
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/GrupoDados"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <View
-                        android:id="@+id/FundoTabela"
-                        android:layout_width="wrap_content"
-                        android:layout_height="30dp"
-                        android:background="#B8B6B6"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/QuadradoListaDados"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/FundoTabela" />
-
-                    <ImageButton
-                        android:id="@+id/ButtonTrocarParaViewAnalise"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/button_ir_analise"
-                        android:text="Analisar"
-                        app:layout_constraintBottom_toBottomOf="@+id/QuadradoListaDados"
-                        app:layout_constraintEnd_toEndOf="@+id/QuadradoListaDados"
-                        app:layout_constraintTop_toTopOf="@+id/QuadradoListaDados">
-
-                    </ImageButton>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/GrupoAnalise"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <View
-                        android:id="@+id/fundoAnalise"
-                        android:layout_width="wrap_content"
-                        android:layout_height="30dp"
-                        android:background="#B8B6B6"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/textAnaliseDados"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Analise de Dados com Gemini"
-                        android:textColor="#000000"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="@+id/fundoAnalise"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/fundoAnalise" />
-
-                    <View
-                        android:id="@+id/QuadradoAnalisarDados"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/fundoAnalise" />
-
-                    <ScrollView
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/buttonTrocarParaViewDados2"
-                        app:layout_constraintStart_toEndOf="@+id/buttonTrocarParaViewDados"
-                        app:layout_constraintTop_toBottomOf="@+id/fundoAnalise">
-
-                        <TextView
-                            android:id="@+id/textRespostaIA"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textColor="#000000"
-                            android:textSize="16sp"
-                            android:justificationMode="inter_word"/>
-                    </ScrollView>
-
-                    <ImageButton
-                        android:id="@+id/buttonTrocarParaViewDados"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/button_voltar_lista"
-                        android:text="Dados"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                    </ImageButton>
-
-                    <ImageButton
-                        android:id="@+id/buttonTrocarParaViewDados2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/button_voltar_lista"
-                        android:text="Dados"
-                        android:visibility="invisible"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="1.0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                    </ImageButton>
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!-- Layout para o menu analisar dados -->
-
-            </ViewSwitcher>
+            app:layout_constraintTop_toTopOf="parent">
 
             <View
-                android:id="@+id/quadradoBaixoGrafico"
+                android:id="@+id/QuadradoGrafico"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:background="@drawable/quadrado_grafico_inicio_parte_baixo"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_height="170dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="32dp"
+                android:background="@drawable/quadrado_grafico_inicio_parte_cima"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/SwitcherDasInfosDoGrafico" />
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageButton
-                android:id="@+id/setaBaixo"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:adjustViewBounds="false"
-                android:background="#006F1F1F"
-                android:cropToPadding="false"
-                app:layout_constraintBottom_toBottomOf="@+id/quadradoBaixoGrafico"
-                app:layout_constraintEnd_toEndOf="@+id/quadradoBaixoGrafico"
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/grafico"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginEnd="64dp"
+                app:layout_constraintBottom_toTopOf="@+id/linhaQuadradoGrafico"
+                app:layout_constraintEnd_toEndOf="@+id/QuadradoGrafico"
+                app:layout_constraintStart_toStartOf="@+id/QuadradoGrafico"
+                app:layout_constraintTop_toBottomOf="@+id/periodo" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/GrupoQuadradoBaixoGraficoServ"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="32dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/quadradoBaixoGrafico"
-                app:srcCompat="@drawable/seta_para_baixo" />
+                app:layout_constraintTop_toBottomOf="@+id/QuadradoGrafico">
+
+
+                <ViewSwitcher
+                    android:id="@+id/SwitcherDasInfosDoGrafico"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center"
+                    android:background="#FFFFFF"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@+id/quadradoBaixoGrafico"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0">
+
+                    <!-- Layout para o menu lista de dados do grafico -->
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/GrupoDados"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <View
+                            android:id="@+id/FundoTabela"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="#B8B6B6"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/QuadradoListaDados"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/FundoTabela" />
+
+                        <ImageButton
+                            android:id="@+id/ButtonTrocarParaViewAnalise"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/button_ir_analise"
+                            android:text="Analisar"
+                            app:layout_constraintBottom_toBottomOf="@+id/QuadradoListaDados"
+                            app:layout_constraintEnd_toEndOf="@+id/QuadradoListaDados"
+                            app:layout_constraintTop_toTopOf="@+id/QuadradoListaDados">
+
+                        </ImageButton>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/GrupoAnalise"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <View
+                            android:id="@+id/fundoAnalise"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="#B8B6B6"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/textAnaliseDados"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Analise de Dados com Gemini"
+                            android:textColor="#000000"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="@+id/fundoAnalise"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/fundoAnalise" />
+
+                        <View
+                            android:id="@+id/QuadradoAnalisarDados"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/fundoAnalise" />
+
+                        <ScrollView
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/buttonTrocarParaViewDados2"
+                            app:layout_constraintStart_toEndOf="@+id/buttonTrocarParaViewDados"
+                            app:layout_constraintTop_toBottomOf="@+id/fundoAnalise">
+
+                            <TextView
+                                android:id="@+id/textRespostaIA"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:justificationMode="inter_word"
+                                android:textColor="#000000"
+                                android:textSize="16sp" />
+                        </ScrollView>
+
+                        <ImageButton
+                            android:id="@+id/buttonTrocarParaViewDados"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/button_voltar_lista"
+                            android:text="Dados"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                        </ImageButton>
+
+                        <ImageButton
+                            android:id="@+id/buttonTrocarParaViewDados2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/button_voltar_lista"
+                            android:text="Dados"
+                            android:visibility="invisible"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="1.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                        </ImageButton>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <!-- Layout para o menu analisar dados -->
+
+                </ViewSwitcher>
+
+                <View
+                    android:id="@+id/quadradoBaixoGrafico"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/quadrado_grafico_inicio_parte_baixo"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/SwitcherDasInfosDoGrafico" />
+
+                <ImageButton
+                    android:id="@+id/setaBaixo"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:adjustViewBounds="false"
+                    android:background="#006F1F1F"
+                    android:cropToPadding="false"
+                    app:layout_constraintBottom_toBottomOf="@+id/quadradoBaixoGrafico"
+                    app:layout_constraintEnd_toEndOf="@+id/quadradoBaixoGrafico"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/quadradoBaixoGrafico"
+                    app:srcCompat="@drawable/seta_para_baixo" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/Recebimento"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/montserrat_regular"
+                android:text="Recebimento Total"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@+id/QuadradoGrafico"
+                app:layout_constraintStart_toStartOf="@+id/QuadradoGrafico"
+                app:layout_constraintTop_toTopOf="@+id/QuadradoGrafico" />
+
+            <TextView
+                android:id="@+id/periodo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_regular"
+                android:text="Periodo: 01/04 até 01/05"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@+id/QuadradoGrafico"
+                app:layout_constraintStart_toStartOf="@+id/QuadradoGrafico"
+                app:layout_constraintTop_toBottomOf="@+id/Recebimento" />
+
+            <View
+                android:id="@+id/linhaQuadradoGrafico"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:background="#BDBDBD"
+                app:layout_constraintBottom_toBottomOf="@+id/QuadradoGrafico"
+                app:layout_constraintEnd_toEndOf="@+id/QuadradoGrafico"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/QuadradoGrafico" />
+
+
+            <Button
+                android:id="@+id/buttonGerenciamentoClientes"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="64dp"
+                android:background="@drawable/button_gerenciamento_clientes"
+                android:drawableTop="@drawable/clientes_icone"
+                android:fontFamily="@font/montserrat_bold"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="Gerenciamento de Clientes"
+                android:textSize="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/buttonGerenciamentoCategoria" />
+
+            <Button
+                android:id="@+id/buttonGerenciamentoServico"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="64dp"
+                android:background="@drawable/button_gerenciamento_servicos"
+                android:drawableTop="@drawable/servico_icone"
+                android:fontFamily="@font/montserrat_bold"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="Gerenciamento de Serviços"
+                android:textSize="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/buttonGerenciamentoClientes" />
+
+            <Button
+                android:id="@+id/buttonGerenciamentoCategoria"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="64dp"
+                android:background="@drawable/button_gerenciamento_servicos"
+                android:backgroundTint="#FFCDD2"
+                android:drawableTop="@drawable/servico_icone"
+                android:fontFamily="@font/montserrat_bold"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="Gerenciamento de Categoria"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/GrupoQuadradoBaixoGraficoServ" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <TextView
-            android:id="@+id/Recebimento"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Recebimento Total"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@+id/QuadradoGrafico"
-            app:layout_constraintStart_toStartOf="@+id/QuadradoGrafico"
-            app:layout_constraintTop_toTopOf="@+id/QuadradoGrafico" />
-
-        <TextView
-            android:id="@+id/periodo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Periodo: 01/04 até 01/05"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@+id/QuadradoGrafico"
-            app:layout_constraintStart_toStartOf="@+id/QuadradoGrafico"
-            app:layout_constraintTop_toBottomOf="@+id/Recebimento" />
-
-        <View
-            android:id="@+id/linhaQuadradoGrafico"
-            android:layout_width="0dp"
-            android:layout_height="2dp"
-            android:background="#BDBDBD"
-            app:layout_constraintBottom_toBottomOf="@+id/QuadradoGrafico"
-            app:layout_constraintEnd_toEndOf="@+id/QuadradoGrafico"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/QuadradoGrafico" />
-
-
-        <Button
-            android:id="@+id/buttonGerenciamentoClientes"
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:layout_marginStart="64dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="64dp"
-            android:background="@drawable/button_gerenciamento_clientes"
-            android:drawableStart="@drawable/clientes_icone"
-            android:text="Gerenciamento de Clientes"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/GrupoQuadradoBaixoGrafico" />
-
-        <Button
-            android:id="@+id/buttonGerenciamentoServico"
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:layout_marginStart="64dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="64dp"
-            android:background="@drawable/button_gerenciamento_servicos"
-            android:drawableStart="@drawable/servico_icone"
-            android:text="Gerenciamento de Serviços"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonGerenciamentoClientes" />
-
-        <Button
-            android:id="@+id/buttonGerenciamentoCategoria"
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:layout_marginStart="64dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="64dp"
-            android:background="@drawable/button_gerenciamento_servicos"
-            android:drawableStart="@drawable/servico_icone"
-            android:text="Gerenciamento de Categoria"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonGerenciamentoServico" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.lifecycle.ViewModelProvider;
+
+import com.example.scmanager.Gerenciamento.ViewModel.CategoriaViewModel;
 import com.example.scmanager.Gerenciamento.ViewModel.ClienteViewModel;
 import com.example.scmanager.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -56,14 +59,12 @@ public class BottomSheetDeletarCliente extends BottomSheetDialogFragment impleme
             nomeClienteText.setText(nomeCliente);
             telefoneClienteText.setText(telefoneCliente);
         }
+        clienteViewModel = new ViewModelProvider(requireActivity()).get(ClienteViewModel.class);
 
         // Inicializa o controlador do banco (Singleton)
         return view;
     }
 
-    public void setClienteViewModel(ClienteViewModel clienteViewModel) {
-        this.clienteViewModel = clienteViewModel;
-    }
 
     @Override
     public void onClick(View v) {

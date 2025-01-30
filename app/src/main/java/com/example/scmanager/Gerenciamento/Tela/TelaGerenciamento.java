@@ -3,15 +3,12 @@ package com.example.scmanager.Gerenciamento.Tela;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
-import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -22,19 +19,27 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.scmanager.BancoDeDados.CategoriaRepository;
-import com.example.scmanager.BancoDeDados.ClienteRepository;
+import com.example.scmanager.BancoDeDados.ControladorBancoDeDados;
 import com.example.scmanager.Gerenciamento.Adapter.CategoriaAdapter;
 import com.example.scmanager.Gerenciamento.Adapter.ClienteAdapter;
+import com.example.scmanager.Gerenciamento.Adapter.ServicoAdapter;
 import com.example.scmanager.Gerenciamento.Objetos.Categoria;
 import com.example.scmanager.Gerenciamento.Objetos.Cliente;
+import com.example.scmanager.Gerenciamento.Objetos.Servico;
 import com.example.scmanager.Gerenciamento.Tela.Categoria.BottomSheetDetalhesCategoria;
 import com.example.scmanager.Gerenciamento.Tela.Cliente.BottomSheetDetalhesCliente;
+import com.example.scmanager.Gerenciamento.Tela.Servico.BottomSheetDetalhesServico;
 import com.example.scmanager.Gerenciamento.ViewModel.CategoriaViewModel;
 import com.example.scmanager.Gerenciamento.ViewModel.ClienteViewModel;
+import com.example.scmanager.Gerenciamento.ViewModel.ServicoViewModel;
 import com.example.scmanager.R;
 import com.example.scmanager.TelaAdicionarCategoriaClienteServico;
+import com.example.scmanager.TelaFiltrarRegistrosListas;
+import com.google.android.material.tabs.TabLayout;
+
 import android.animation.ObjectAnimator;
+
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.List;
 
@@ -52,7 +57,7 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
     //Layout de respectivo gerenciamento, será usado para criar animacoes de surgimento e desaparecimento
     private ConstraintLayout LayoutClientes;
     private ConstraintLayout LayoutCategorias;
-
+    private ConstraintLayout LayoutServico;
 
 
     //Objetos que exibirão os dados de respectivo gerenciamento
@@ -63,33 +68,50 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
 
     private ClienteAdapter clienteAdapter;
     private ClienteViewModel clienteViewModel;
+    private ServicoViewModel servicoViewModel;
     private CategoriaViewModel categoriaViewModel;
     private CategoriaAdapter categoriaAdapter;
-
-    //Button para trocar a exibicao do Layout
-    private Button buttonCategoria;
-    private Button buttonCliente;
-    private Button buttonServico;
-
+    private ServicoAdapter servicoAdapter;
 
     //Indicativo de que opcao escolheu e está
-    private View barraOpEscolhida;
     private String vaiPara = "";
     //Valor para saber qual layout exibir
     private String valor;
+    private TabLayout tabLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tela_gerenciamento_cliente);
-        referenciasButtonFlutuante();
-        referenciasRecyclerView();
+
+        tabLayout = findViewById(R.id.tabLayout);
+
+        recyclerViewClientes = findViewById(R.id.QuadradoLista);
+        recyclerViewCategorias = findViewById(R.id.QuadradoListaCategoria);
+        recyclerViewServicos = findViewById(R.id.QuadradoListaServ);
+        recyclerViewClientes.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewCategorias.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewServicos.setLayoutManager(new LinearLayoutManager(this));
+
+        clienteViewModel = new ViewModelProvider(this).get(ClienteViewModel.class);
+        servicoViewModel = new ViewModelProvider(this).get(ServicoViewModel.class);
+        categoriaViewModel = new ViewModelProvider(this).get(CategoriaViewModel.class);
+
+        LayoutClientes = findViewById(R.id.LayoutClientes);
+        LayoutCategorias = findViewById(R.id.GrupoIconesCategoria);
+        LayoutServico = findViewById(R.id.GrupoLayoutServico);
+        voltarTela = findViewById(R.id.imageVoltarTela);
+        imageMaisOpcoes = findViewById(R.id.imageMaisOpcoes);
+        imageAdicionarLista = findViewById(R.id.imageAdicionarLista);
+        imageFiltrarLista = findViewById(R.id.imageFiltrarLista);
+
+        voltarTela.setOnClickListener(this);
+        imageMaisOpcoes.setOnClickListener(this);
+        imageAdicionarLista.setOnClickListener(this);
+        imageFiltrarLista.setOnClickListener(this);
+
         referenciarLayout();
 
-        // Obter instância do banco de dados e do repositório
-        ClienteRepository clienteRepository = new ClienteRepository(this);
-        clienteViewModel = new ViewModelProvider(this).get(ClienteViewModel.class);
-
-        // Adicionando o Observer para o LiveData
         clienteViewModel.getListaClientes().observe(this, new Observer<List<Cliente>>() {
             @Override
             public void onChanged(List<Cliente> clientes) {
@@ -98,316 +120,222 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
                     clienteAdapter = new ClienteAdapter(TelaGerenciamento.this, clientes);
                     recyclerViewClientes.setAdapter(clienteAdapter);
                 } else {
-                    clienteAdapter.setClientes(clientes); // Supondo que o Adapter tenha um metodo para atualizar a lista
+                    clienteAdapter.setCliente(clientes);
+                    clienteAdapter.notifyDataSetChanged();
                 }
 
                 // Atualiza a altura do RecyclerView com base na quantidade de itens
                 int itemCount = clientes.size();
-                int itemHeight = dpToPx(100); // Convertendo 100dp para pixels
-
                 if (itemCount == 0) {
-                    // Se não houver itens, defina a altura do RecyclerView como 0
                     recyclerViewClientes.getLayoutParams().height = 0;
                 }
                 recyclerViewClientes.requestLayout();
+                servicoViewModel.carregarServicos();
             }
         });
 
+        ControladorBancoDeDados db = ControladorBancoDeDados.getInstance(getApplicationContext());
+        db.verServico();
 
-        // Obter instância do banco de dados e do repositório
-        CategoriaRepository categoriaRepository = new CategoriaRepository(this);
-        categoriaViewModel = new ViewModelProvider(this).get(CategoriaViewModel.class);
-
-        // Adicionando o Observer para o LiveData
         categoriaViewModel.getListaCategorias().observe(this, new Observer<List<Categoria>>() {
             @Override
             public void onChanged(List<Categoria> categorias) {
-                // Atualize o Adapter com a nova lista de clientes
                 if (categoriaAdapter == null) {
                     categoriaAdapter = new CategoriaAdapter(TelaGerenciamento.this, categorias);
                     recyclerViewCategorias.setAdapter(categoriaAdapter);
                 } else {
-                    categoriaAdapter.setCategoria(categorias); // Supondo que o Adapter tenha um metodo para atualizar a lista
+                    categoriaAdapter.setCategoria(categorias);
+                    categoriaAdapter.notifyDataSetChanged();
                 }
 
-                // Atualiza a altura do RecyclerView com base na quantidade de itens
                 int itemCount = categorias.size();
-                int itemHeight = dpToPx(100); // Convertendo 100dp para pixels
-
                 if (itemCount == 0) {
-                    // Se não houver itens, defina a altura do RecyclerView como 0
                     recyclerViewCategorias.getLayoutParams().height = 0;
                 }
                 recyclerViewCategorias.requestLayout();
+                servicoViewModel.carregarServicos();
+            }
+        });
+
+
+        servicoViewModel.getListaServico().observe(this, new Observer<List<Servico>>() {
+            @Override
+            public void onChanged(List<Servico> servicos) {
+                // Atualize o Adapter com a nova lista de serviços
+                if (servicoAdapter == null) {
+                    servicoAdapter = new ServicoAdapter(TelaGerenciamento.this, servicos, categoriaViewModel, clienteViewModel);
+                    recyclerViewServicos.setAdapter(servicoAdapter);
+                } else {
+                    servicoAdapter.setServico(servicos);
+                    servicoAdapter.notifyDataSetChanged();
+                }
+
+                // Atualiza a altura do RecyclerView com base na quantidade de itens
+                int itemCount = servicos.size();
+                if (itemCount == 0) {
+                    recyclerViewServicos.getLayoutParams().height = 0;
+                }
+                recyclerViewServicos.requestLayout();
+            }
+        });
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                String direcao = "";
+                String veioDe = vaiPara;
+                switch (tab.getPosition()) {
+                    case 0:
+                        if(veioDe == "servico") direcao = "esquerda";animarTransicaoLayouts(LayoutServico,LayoutCategorias,direcao);
+                        if(veioDe == "cliente") direcao = "esquerda";animarTransicaoLayouts(LayoutClientes,LayoutCategorias,direcao);
+                        if(veioDe == "categoria")LayoutCategorias.setVisibility(View.VISIBLE);
+                        vaiPara = "categoria";
+                        break;
+                    case 1:
+                        if(veioDe == "servico") direcao = "esquerda";animarTransicaoLayouts(LayoutServico,LayoutClientes,direcao);
+                        if(veioDe == "categoria") direcao = "direita";animarTransicaoLayouts(LayoutCategorias,LayoutClientes,direcao);
+                        if(veioDe == "cliente")LayoutClientes.setVisibility(View.VISIBLE);
+                        vaiPara = "cliente";
+                        break;
+                    case 2:
+                        if(veioDe == "cliente") direcao = "direita";animarTransicaoLayouts(LayoutClientes,LayoutServico,direcao);
+                        if(veioDe == "categoria") direcao = "direita";animarTransicaoLayouts(LayoutCategorias,LayoutServico,direcao);
+                        if(veioDe == "servico")LayoutServico.setVisibility(View.VISIBLE);
+                        vaiPara = "servico";
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                // Implementar caso precise realizar algo ao desmarcar a aba
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0:
+                        LayoutCategorias.setVisibility(View.VISIBLE);
+                        vaiPara = "categoria";
+                        break;
+                    case 1:
+                        LayoutClientes.setVisibility(View.VISIBLE);
+                        vaiPara = "cliente";
+                        break;
+                    case 2:
+                        LayoutServico.setVisibility(View.VISIBLE);
+                        vaiPara = "servico";
+                        break;
+                }
             }
         });
     }
 
     private void referenciarLayout()
     {
-        LayoutClientes = findViewById(R.id.LayoutClientes);
-        LayoutCategorias = findViewById(R.id.GrupoIconesCategoria);
-        barraOpEscolhida = findViewById(R.id.barraOpcaoSelecionado);
-
         Intent intent = getIntent();
         // Recupera o valor passado no Intent
         valor = intent.getStringExtra("botao_apertado");
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) barraOpEscolhida.getLayoutParams();
 
         if(valor.equals("categoria"))
         {
+            LayoutCategorias.setVisibility(View.VISIBLE);
             LayoutClientes.setVisibility(View.INVISIBLE);
-//            LayoutServico.setVisibility(View.GONE);
-            atualizarBotoes(false, true, true);
-            params.horizontalBias = 0.0f;  // Alinha à esquerda
-            params.startToStart = buttonCategoria.getId();  // Define o final à direita do botão "Serviço"
-            params.leftMargin = buttonCategoria.getPaddingLeft();
+            LayoutServico.setVisibility(View.INVISIBLE);
+            tabLayout.selectTab(tabLayout.getTabAt(0)); // 0 é a posição da aba "Categoria"
             vaiPara = "categoria";
         }
         else if (valor.equals("cliente"))
         {
+            LayoutClientes.setVisibility(View.VISIBLE);
             LayoutCategorias.setVisibility(View.INVISIBLE);
-//            LayoutServico.setVisibility(View.GONE);
-            atualizarBotoes(true, true, false);
+            LayoutServico.setVisibility(View.INVISIBLE);
+            tabLayout.selectTab(tabLayout.getTabAt(1)); // 1 é a posição da aba "Cliente"
             // Quando clicado no "serviço" novamente
-            params.horizontalBias = 0.5f;  // Centraliza
-            params.leftMargin = 0;  // Sem padding lateral
-            params.rightMargin = 0; // Sem padding lateral//
             vaiPara = "cliente";
         }
         else if (valor.equals("servico"))
         {
+            LayoutServico.setVisibility(View.VISIBLE);
             LayoutCategorias.setVisibility(View.INVISIBLE);
             LayoutClientes.setVisibility(View.INVISIBLE);
-            atualizarBotoes(true, false, true);
-            params.horizontalBias = 1.0f;  // Alinha à direita
-            params.endToEnd = buttonServico.getId();  // Define o final à direita do botão "Serviço"
-            // Ajusta o padding lateral para a largura do botão "Serviço"
-            params.rightMargin = buttonServico.getPaddingRight();
-
+            tabLayout.selectTab(tabLayout.getTabAt(2)); // 2 é a posição da aba "Servico"
             vaiPara = "servico";
         }
-        barraOpEscolhida.setLayoutParams(params);
-
 
     }
-    private void alternarLayout(String valor1) {
-        // Hides currently visible layout
-        if (LayoutClientes.getVisibility() == View.VISIBLE) {
-            animarSaidaPorBaixo(LayoutClientes, 500);
-        } else if (LayoutCategorias.getVisibility() == View.VISIBLE) {
-            animarSaidaPorBaixo(LayoutCategorias, 500);
+
+    private void animarTransicaoLayouts(View layoutAnterior, View layoutNovo, String lado) {
+        // Torna o layout anterior visível antes de iniciar a animação
+
+        // Verifica para qual direção a animação será feita
+        float inicioXLayoutAnterior = 0f;
+        float fimXLayoutAnterior = 0f;
+        float inicioXLayoutNovo = 0f;
+        float fimXLayoutNovo = 0f;
+
+        // Caso o lado seja "esquerda", os layouts vão da direita para a esquerda
+        if (lado.equals("esquerda")) {
+            // Layout anterior vai para a direita (fora da tela)
+            inicioXLayoutAnterior = 0f;
+            fimXLayoutAnterior = layoutAnterior.getWidth(); // Move para a direita
+            // Novo layout vem da esquerda (fora da tela) para a posição original
+            inicioXLayoutNovo = -layoutNovo.getWidth(); // Começa fora da tela à esquerda
+            fimXLayoutNovo = 0f; // Vai para a posição original
+        }
+        // Caso o lado seja "direita", os layouts vão da esquerda para a direita
+        else if (lado.equals("direita")) {
+            // Layout anterior vai para a esquerda (fora da tela)
+            inicioXLayoutAnterior = 0f;
+            fimXLayoutAnterior = -layoutAnterior.getWidth(); // Move para a esquerda
+            // Novo layout vem da direita (fora da tela) para a posição original
+            inicioXLayoutNovo = layoutNovo.getWidth(); // Começa fora da tela à direita
+            fimXLayoutNovo = 0f; // Vai para a posição original
         }
 
-        // Set new value
-        valor = valor1;
+        // Primeiro, esconda o layout anterior com a animação de "arraste para fora"
+        ObjectAnimator animaLayoutAnterior = ObjectAnimator.ofFloat(layoutAnterior, "translationX", inicioXLayoutAnterior, fimXLayoutAnterior);
+        animaLayoutAnterior.setDuration(300); // Duração da animação (em milissegundos)
 
-        // Update button states and show respective layout
-        if (valor.equals("cliente")) {
-            atualizarBotoes(true, true, false);
-            vaiPara = "cliente";
-            animarEntradaPorBaixo(LayoutClientes, 1000);
-        } else if (valor.equals("categoria")) {
-            atualizarBotoes(false, true, true);
-            vaiPara = "categoria";
-            animarEntradaPorBaixo(LayoutCategorias, 1000);
-        } else if (valor.equals("servico")) {
-            atualizarBotoes(true, false, true);
-            vaiPara = "servico";
-            animarEntradaPorBaixo(LayoutCategorias, 1000); // Se for necessário mais tarde
-        }
-    }
+        // Depois, traga o layout novo de fora para dentro com a animação de "arraste para dentro"
+        layoutNovo.setTranslationX(inicioXLayoutNovo); // Começa fora da tela
+        ObjectAnimator animaLayoutNovo = ObjectAnimator.ofFloat(layoutNovo, "translationX", fimXLayoutNovo);
+        animaLayoutNovo.setDuration(300); // Duração da animação (em milissegundos)
 
-    private void atualizarBotoes(boolean categoria, boolean servico, boolean cliente) {
-        buttonCategoria.setEnabled(categoria);
-        buttonServico.setEnabled(servico);
-        buttonCliente.setEnabled(cliente);
-    }
-
-    public void animarEntradaPorBaixo(View layout, long duracao) {
-        // Inicializa a visibilidade como INVISIBLE para que o layout não apareça antes de animar
-        layout.setVisibility(View.INVISIBLE);
-        animarBarraOpEscolhida(1000);
-        // Configura a posição inicial abaixo da tela
-        layout.setTranslationY(layout.getHeight()); // Move o layout para fora da tela (abaixo)
-
-        // Cria a animação para mover o layout até sua posição original (0f) e também alterar a opacidade (alpha)
-        ObjectAnimator translateAnimator = ObjectAnimator.ofFloat(layout, "translationY", 0f);
-        ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(layout, "alpha", 0f, 1f);
-
-        // Agrupa as duas animações
+        // Crie um AnimatorSet para rodar as animações ao mesmo tempo
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(translateAnimator, alphaAnimator);  // Reproduz ambas ao mesmo tempo
+        animatorSet.playTogether(animaLayoutAnterior, animaLayoutNovo);
 
-        // Define a duração da animação
-        animatorSet.setDuration(duracao);
-        animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
+        // Ao terminar a animação, o layout anterior ficará invisível
+        animatorSet.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                layoutNovo.setVisibility(View.VISIBLE); // Torna o novo layout visível
+            }
 
-        // Inicia a animação
-        animatorSet.start();
-        layout.setVisibility(View.VISIBLE);
-
-
-    }
-
-    public void animarSaidaPorBaixo(View layout, long duracao) {
-        // Calcula a posição final abaixo da tela
-        float alturaTela = layout.getHeight();
-
-        // Cria a animação para mover o layout para fora da tela (para baixo)
-        ObjectAnimator animator = ObjectAnimator.ofFloat(layout, "translationY", alturaTela);
-        ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(layout, "alpha", 1f, 0f);
-
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(animator, alphaAnimator);  // Reproduz ambas ao mesmo tempo
-
-        animator.setDuration(duracao); // Define a duração da animação em milissegundos
-        animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
-
-        // Ouve o final da animação
-        animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                // Após a animação, torna o layout invisível
-                layout.setVisibility(View.INVISIBLE);
+                // Torna o layout anterior invisível após a animação
+                layoutNovo.setVisibility(View.VISIBLE); // Torna o novo layout visível
+                layoutAnterior.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                layoutNovo.setVisibility(View.VISIBLE); // Torna o novo layout visível
+                layoutAnterior.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+                // Nada a fazer se a animação for repetida
             }
         });
 
         // Inicia a animação
-        animator.start();
-    }
-
-    public void animarBarraOpEscolhida(long duracao) {
-        // Define o LayoutParams para aplicar mudanças de posição
-        final ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) barraOpEscolhida.getLayoutParams();
-
-        // Variáveis para controle de animação
-        final float initialBias = params.horizontalBias;
-        final float finalBias;
-        final int initialLeftMargin = params.leftMargin;
-        final int initialRightMargin = params.rightMargin;
-
-        // Variáveis de padding
-        final int targetLeftMargin;
-        final int targetRightMargin;
-
-        final int startToStart;
-        final int endToEnd;
-
-        // Determina qual é o destino da animação (Categoria ou Serviço)
-        if ("categoria".equals(vaiPara)) {
-            finalBias = 0.0f;  // Alinha à esquerda
-
-            // Ajusta o padding lateral para a largura do botão "Categoria"
-            targetLeftMargin = buttonCategoria.getPaddingLeft();
-            startToStart = buttonCategoria.getId();  // Define o início do botão "Categoria"
-            endToEnd = 0;  // Não há necessidade de alinhar com outro botão
-            targetRightMargin = 0;  // Não precisa de padding direito
-        } else if ("servico".equals(vaiPara)) {
-            finalBias = 1.0f;  // Alinha à direita
-
-            // Ajusta o padding lateral para a largura do botão "Serviço"
-            targetRightMargin = buttonServico.getPaddingRight();
-            startToStart = 0;  // Não há necessidade de alinhar com outro botão
-            endToEnd = buttonServico.getId();  // Define o final do botão "Serviço"
-            targetLeftMargin = 0;  // Não precisa de padding esquerdo
-        } else if ("cliente".equals(vaiPara)) {
-            finalBias = 0.5f;  // Centraliza
-            targetLeftMargin = 0;  // Sem padding lateral
-            targetRightMargin = 0;  // Sem padding lateral
-            startToStart = 0;
-            endToEnd = 0;
-        } else {
-            finalBias = initialBias;
-            targetLeftMargin = initialLeftMargin;
-            targetRightMargin = initialRightMargin;
-            startToStart = 0;
-            endToEnd = 0;
-        }
-
-        // Criação da animação para alterar o horizontalBias, leftMargin e rightMargin
-        ValueAnimator biasAnimator = ValueAnimator.ofFloat(initialBias, finalBias);
-        ValueAnimator leftMarginAnimator = ValueAnimator.ofInt(initialLeftMargin, targetLeftMargin);
-        ValueAnimator rightMarginAnimator = ValueAnimator.ofInt(initialRightMargin, targetRightMargin);
-
-        // Define a duração para as animações
-        biasAnimator.setDuration(duracao);
-        leftMarginAnimator.setDuration(duracao);
-        rightMarginAnimator.setDuration(duracao);
-
-        // Define a interpolação para as animações (usando um interpolador de desaceleração)
-        biasAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-        leftMarginAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-        rightMarginAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-
-        // Atualiza os parâmetros do Layout conforme a animação avança
-        ValueAnimator.AnimatorUpdateListener updateListener = new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                // Atualiza o horizontalBias no LayoutParams
-                params.horizontalBias = (float) biasAnimator.getAnimatedValue();
-
-                // Atualiza os margens esquerdo e direito (levando em conta os paddings)
-                // Só aplica os paddings se o destino for "categoria" ou "serviço"
-                if ("categoria".equals(vaiPara)) {
-                    params.leftMargin = (int) leftMarginAnimator.getAnimatedValue() + buttonCategoria.getPaddingLeft();
-                    params.rightMargin = 0;  // Sem padding direito
-                } else if ("servico".equals(vaiPara)) {
-                    params.rightMargin = (int) rightMarginAnimator.getAnimatedValue() + buttonServico.getPaddingRight();
-                    params.leftMargin = 0;  // Sem padding esquerdo
-                } else {
-                    params.leftMargin = (int) leftMarginAnimator.getAnimatedValue();
-                    params.rightMargin = (int) rightMarginAnimator.getAnimatedValue();
-                }
-
-
-                // Aplica as alterações no Layout
-                barraOpEscolhida.setLayoutParams(params);
-            }
-        };
-
-        // Adiciona o update listener em todas as animações
-        biasAnimator.addUpdateListener(updateListener);
-        leftMarginAnimator.addUpdateListener(updateListener);
-        rightMarginAnimator.addUpdateListener(updateListener);
-
-        // Inicia as animações
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(biasAnimator, leftMarginAnimator, rightMarginAnimator);
         animatorSet.start();
     }
 
-
-    private void referenciasRecyclerView()
-    {
-        recyclerViewClientes = findViewById(R.id.QuadradoLista);
-        recyclerViewClientes.setLayoutManager(new LinearLayoutManager(this));
-
-        recyclerViewCategorias = findViewById(R.id.QuadradoListaCategoria);
-        recyclerViewCategorias.setLayoutManager(new LinearLayoutManager(this));
-
-//        recyclerViewServicos = findViewById(R.id.QuadradoLista);
-//        recyclerViewServicos.setLayoutManager(new LinearLayoutManager(this));
-    }
-
-    private void referenciasButtonFlutuante()
-    {
-        voltarTela = findViewById(R.id.imageVoltarTela);
-        voltarTela.setOnClickListener(this);
-        imageMaisOpcoes = findViewById(R.id.imageMaisOpcoes);
-        imageMaisOpcoes.setOnClickListener(this);
-        imageAdicionarLista = findViewById(R.id.imageAdicionarLista);
-        imageAdicionarLista.setOnClickListener(this);
-        imageFiltrarLista = findViewById(R.id.imageFiltrarLista);
-        imageFiltrarLista.setOnClickListener(this);
-        buttonCategoria = findViewById(R.id.buttonCategoria);
-        buttonCategoria.setOnClickListener(this);
-        buttonCliente = findViewById(R.id.buttonClientes);
-        buttonCliente.setOnClickListener(this);
-        buttonServico = findViewById(R.id.buttonServicos);
-        buttonServico.setOnClickListener(this);
-    }
 
     @Override
     public void onClick(View view) {
@@ -426,20 +354,18 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
             bundle.putString("veioDe",vaiPara);
             fragment.setClienteViewModel(clienteViewModel);
             fragment.setCategoriaViewModel(categoriaViewModel);
+            fragment.setServicoViewModel(servicoViewModel);
             fragment.setArguments(bundle);
             fragment.show(getSupportFragmentManager(), fragment.getTag());
 
         } else if (view.getId() == R.id.imageFiltrarLista) {
             Toast.makeText(getBaseContext(), "apertou em filtrar", Toast.LENGTH_SHORT).show();
-        } else if(view.getId() == R.id.buttonCategoria){
-            valor = "categoria";
-            alternarLayout(valor);
-        } else if (view.getId() == R.id.buttonClientes){
-            valor = "cliente";
-            alternarLayout(valor);
-        } else if (view.getId() == R.id.buttonServicos){
-            valor = "servico";
-            alternarLayout(valor);
+            TelaFiltrarRegistrosListas fragment = new TelaFiltrarRegistrosListas();
+            Bundle bundle = new Bundle();
+            bundle.putString("veioDe",vaiPara);
+            fragment.setArguments(bundle);
+            fragment.show(getSupportFragmentManager(), fragment.getTag());
+
         }
     }
 
@@ -608,11 +534,6 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
         animator.start();
     }
 
-    public int dpToPx(int dp) {
-        float density = getResources().getDisplayMetrics().density;
-        return Math.round(dp * density);
-    }
-
     //Funcao chamada ao clicar na lupa do recyclerView (tela detalhes cliente)
     public void onClienteClicked(Cliente cliente) {
         // Aqui você pode fazer algo com o cliente clicado, como pegar o ID
@@ -629,7 +550,6 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
         // Exemplo: Você pode iniciar uma nova Activity com os detalhes do cliente
         BottomSheetDetalhesCliente fragment = new BottomSheetDetalhesCliente();
         fragment.setArguments(bundle);
-        fragment.setClienteViewModel(clienteViewModel);
         fragment.show(getSupportFragmentManager(), fragment.getTag());
     }
 
@@ -644,29 +564,30 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
         // Exemplo: Você pode iniciar uma nova Activity com os detalhes do cliente
         BottomSheetDetalhesCategoria fragment = new BottomSheetDetalhesCategoria();
         fragment.setArguments(bundle);
-        fragment.setCategoriaViewModel(categoriaViewModel);
         fragment.show(getSupportFragmentManager(), fragment.getTag());
     }
 
-    //Será usada dentro da class de abrir o bottom sheet de detalhes
-//    private void Excluir(Cliente cliente)
-//    {
-//        // Aqui você pode fazer algo com o cliente clicado, como pegar o ID
-//        long clienteId = cliente.getId();  // Ou qualquer outra propriedade do cliente
-//        String ClienteNome = cliente.getNome();
-//        String ClieneTelefone = cliente.getTelefone();
-//
-//        // Passa o ID do cliente para o BottomSheet usando um Bundle
-//        Bundle bundle = new Bundle();
-//        bundle.putLong("clienteId", clienteId);
-//        bundle.putString("clienteNome", ClienteNome);
-//        bundle.putString("clienteTelefone", ClieneTelefone);
-//
-//        // Exemplo: Você pode iniciar uma nova Activity com os detalhes do cliente
-//        BottomSheetDeletarCliente fragment = new BottomSheetDeletarCliente();
-//        fragment.setArguments(bundle);
-//        fragment.setClienteViewModel(clienteViewModel);
-//        fragment.show(getSupportFragmentManager(), fragment.getTag());
-//    }
+    public void onServicoClicked(Servico servico) {
+        long servicoId = servico.getId();
+        Integer tipoServico = servico.getTipoServico();
+        Integer idCliente = servico.getIdCliente();
+        Double valor = servico.getValor();
+        String dataAceiteServico = servico.getDataAceiteServico();
+        Integer estado = servico.getEstado();
+        String dataPagamento = servico.getDataPagamento();
 
+        Bundle bundle = new Bundle();
+        bundle.putLong("servicoId", servicoId);
+        bundle.putInt("tipoServico",tipoServico);
+        bundle.putInt("idCliente",idCliente);
+        bundle.putDouble("valor",valor);
+        bundle.putString("dataAceiteServico",dataAceiteServico);
+        bundle.putInt("estado",estado);
+        bundle.putString("dataPagamento",dataPagamento);
+
+        // Exemplo: Você pode iniciar uma nova Activity com os detalhes do cliente
+        BottomSheetDetalhesServico fragment = new BottomSheetDetalhesServico();
+        fragment.setArguments(bundle);
+        fragment.show(getSupportFragmentManager(), fragment.getTag());
+    }
 }

@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.example.scmanager.Gerenciamento.Objetos.Categoria;
-import com.example.scmanager.Gerenciamento.Objetos.Cliente;
 
 import java.util.ArrayList;
 import java.util.List;

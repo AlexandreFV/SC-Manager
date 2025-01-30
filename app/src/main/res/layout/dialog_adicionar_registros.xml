@@ -20,10 +20,15 @@
         android:id="@+id/CategoriaButtonAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="40dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/button_add_layout_no_gradiente"
+        android:drawableStart="@drawable/categoria"
+        android:fontFamily="@font/montserrat_regular"
+        android:minWidth="100dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
         android:text="Categoria"
         app:layout_constraintEnd_toStartOf="@+id/btnAddCliente"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,8 +40,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:background="@drawable/button_add_layout_no_gradiente"
-        android:drawableStart="@drawable/pessoa"
+        android:drawableStart="@drawable/pessoa_icon"
         android:text="Cliente"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:minWidth="100dp"
+        android:fontFamily="@font/montserrat_regular"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -45,11 +54,15 @@
         android:id="@+id/btnAddServico"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="40dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/button_add_layout_no_gradiente"
-        android:drawableStart="@drawable/chave"
+        android:drawableStart="@drawable/chave_de_fenda"
+        android:fontFamily="@font/montserrat_regular"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:minWidth="100dp"
         android:text="Serviço"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btnAddCliente"
@@ -79,19 +92,20 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/FundoLayoutAddCategoria"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_marginTop="24dp"
+        android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnAddCliente"
+        app:layout_constraintTop_toBottomOf="@+id/LinhaButtonsAdd"
         app:layout_constraintVertical_bias="0.0">
 
         <TextView
             android:id="@+id/textViewDetalhesCliente"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/montserrat_bold"
             android:text="Adicionar Categoria"
             android:textColor="#000000"
             android:textSize="16sp"
@@ -128,8 +142,9 @@
                 android:id="@+id/inputNomeCategoria"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLength="40"
-                android:hint="Nome*:" />
+                android:fontFamily="@font/montserrat_regular"
+                android:hint="Nome*:"
+                android:maxLength="40" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
@@ -137,7 +152,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/button_confirmar_edicao"
+            android:drawableStart="@drawable/add_circle"
+            android:fontFamily="@font/montserrat_regular"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
             android:text="Adicionar"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
@@ -146,19 +168,20 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/FundoLayoutAddCliente"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_marginTop="24dp"
+        android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnAddServico"
+        app:layout_constraintTop_toBottomOf="@+id/LinhaButtonsAdd"
         app:layout_constraintVertical_bias="0.0">
 
         <TextView
             android:id="@+id/textAdicionarCliente"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/montserrat_bold"
             android:text="Adicionar Cliente"
             android:textColor="#000000"
             android:textSize="16sp"
@@ -196,8 +219,9 @@
                 android:id="@+id/inputNomeCliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLength="40"
-                android:hint="Nome*:" />
+                android:fontFamily="@font/montserrat_regular"
+                android:hint="Nome*:"
+                android:maxLength="40" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -218,8 +242,9 @@
                 android:id="@+id/inputTelefone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLength="20"
-                android:hint="Telefone*:" />
+                android:fontFamily="@font/montserrat_regular"
+                android:hint="Telefone*:"
+                android:maxLength="20" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
@@ -227,7 +252,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/button_confirmar_edicao"
+            android:drawableStart="@drawable/add_circle"
+            android:fontFamily="@font/montserrat_regular"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
             android:text="Adicionar"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout3" />
@@ -236,14 +268,266 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/FundoLayoutAddServico"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="24dp"
-        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linhaButtonsAdd2"
+        app:layout_constraintTop_toBottomOf="@+id/LinhaButtonsAdd"
         app:layout_constraintVertical_bias="0.0">
+
+        <Button
+            android:id="@+id/buttonSalvarServico"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/button_confirmar_edicao"
+            android:drawableStart="@drawable/add_circle"
+            android:fontFamily="@font/montserrat_regular"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="Adicionar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linhaButtonsAdd2212" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="Adicionar Serviço"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/view10"
+            android:layout_width="wrap_content"
+            android:layout_height="2dp"
+            android:layout_marginTop="8dp"
+            android:background="#000000"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+        <View
+            android:id="@+id/linhaButtonsAdd6"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="8dp"
+            android:background="#E0E0E0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/menuTipoServ" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/menuTipoServ"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:hint="Tipo de Serviço*:"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view10">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/InputTipoServico"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_regular"
+                android:inputType="none" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <View
+            android:id="@+id/linhaButtonsAdd"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="8dp"
+            android:background="#E0E0E0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/menuNomeClienteServ" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/menuNomeClienteServ"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/montserrat_regular"
+            android:hint="Nome do Cliente*:"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linhaButtonsAdd6">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/InputNomeClienteServ"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_regular"
+                android:inputType="none" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <View
+            android:id="@+id/linhaButtonsAdd1"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="8dp"
+            android:background="#E0E0E0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/menuValorServ" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/menuValorServ"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/montserrat_regular"
+            android:hint="Valor*:"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linhaButtonsAdd">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/InputValorServ"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_regular"
+                android:inputType="number" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <View
+            android:id="@+id/linhaButtonsAdd22"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="8dp"
+            android:background="#E0E0E0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/menuDataServicoAceiteServ" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/menuDataServicoAceiteServ"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/montserrat_regular"
+            android:hint="Data de Aceite do Serviço*:"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linhaButtonsAdd1">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/InputDataAceiteServ"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:fontFamily="@font/montserrat_regular"
+                android:inputType="date" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <View
+            android:id="@+id/linhaButtonsAdd221"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="8dp"
+            android:background="#E0E0E0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/menuEstadoServ" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/menuEstadoServ"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/montserrat_regular"
+            android:hint="Estado*:"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linhaButtonsAdd22">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/InputEstadoServ"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_regular"
+                android:inputType="none"
+                android:text="Selecione o estado do serviço!"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <View
+            android:id="@+id/linhaButtonsAdd2212"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="8dp"
+            android:background="#E0E0E0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/menuDataPagamentoRecebidoOuAReceberServ" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/menuDataPagamentoRecebidoOuAReceberServ"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/montserrat_regular"
+            android:hint="*:"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linhaButtonsAdd221">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/InputPagamentoServ"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:fontFamily="@font/montserrat_regular"
+                android:inputType="date" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <EditText
+            android:id="@+id/editTextIdCliente"
+            android:layout_width="0dp"
+            android:layout_height="0dp"></EditText>
+
+        <EditText
+            android:id="@+id/editTextIdCategoria"
+            android:layout_width="0dp"
+            android:layout_height="0dp"></EditText>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

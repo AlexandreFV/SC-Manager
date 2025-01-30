@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.scmanager.BancoDeDados.CategoriaRepository;
 import com.example.scmanager.Gerenciamento.Objetos.Categoria;
@@ -25,6 +26,7 @@ public class CategoriaViewModel extends AndroidViewModel {
         listaCategorias = new MutableLiveData<>();
         carregarCategorias();
     }
+
 
     public LiveData<List<Categoria>> getListaCategorias() {
         return listaCategorias;
@@ -77,7 +79,7 @@ public class CategoriaViewModel extends AndroidViewModel {
         });
     }
 
-    private void carregarCategorias() {
+    public void carregarCategorias() {
         categoriaRepository.CarregarCategoriasAsync(new CategoriaRepository.CategoriaListCallback() {
             @Override
             public void onCategoriasLoaded(List<Categoria> categorias) {
@@ -85,6 +87,7 @@ public class CategoriaViewModel extends AndroidViewModel {
             }
         });
     }
+
 
     private void showToast(String mensagem) {
         new android.os.Handler(Looper.getMainLooper()).post(() ->

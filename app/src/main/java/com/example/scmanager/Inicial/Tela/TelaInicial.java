@@ -5,11 +5,14 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.app.Application;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -18,15 +21,27 @@ import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.splashscreen.SplashScreen;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.scmanager.BuildConfig;
+import com.example.scmanager.Gerenciamento.Adapter.CategoriaAdapter;
+import com.example.scmanager.Gerenciamento.Adapter.ServicoAdapter;
+import com.example.scmanager.Gerenciamento.Objetos.Categoria;
+import com.example.scmanager.Gerenciamento.Objetos.Servico;
 import com.example.scmanager.Gerenciamento.Tela.TelaGerenciamento;
+import com.example.scmanager.Gerenciamento.ViewModel.CategoriaViewModel;
+import com.example.scmanager.Gerenciamento.ViewModel.ClienteViewModel;
+import com.example.scmanager.Gerenciamento.ViewModel.ServicoViewModel;
 import com.example.scmanager.R;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
@@ -44,11 +59,14 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Executors;
 
 
-public class TelaInicial extends AppCompatActivity implements View.OnClickListener{
+public class TelaInicial extends AppCompatActivity implements View.OnClickListener {
 
     private ConstraintLayout GrupoIcones;
 
@@ -79,6 +97,12 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
     private ConstraintLayout GrupoAnalise;
 
     private TextView textRespostaIA;
+    private ServicoViewModel servicoViewModel;
+    private ServicoAdapter servicoAdapter;
+    private CategoriaAdapter categoriaAdapter;
+    private CategoriaViewModel categoriaViewModel;
+    private ClienteViewModel clienteViewModel;
+    private RecyclerView QuadradoListaDados;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Handle the splash screen transition.
@@ -96,8 +120,65 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         GrupoAnalise = findViewById(R.id.GrupoAnalise);
         textRespostaIA = findViewById(R.id.textRespostaIA);
 
-        if(primeiraExecucao)
-        {
+
+        clienteViewModel = new ViewModelProvider(
+                this, // 'this' é a Activity, que implementa ViewModelStoreOwner
+                new ViewModelProvider.AndroidViewModelFactory(getApplication())
+        ).get(ClienteViewModel.class);
+
+
+//        Alterar Depois para cliente
+//        categoriaAdapter = new CategoriaAdapter(TelaInicial.this, new ArrayList<>());
+//
+//        categoriaViewModel.getListaCategorias().observe(this, new Observer<List<Categoria>>() {
+//            @Override
+//            public void onChanged(List<Categoria> categorias) {
+//                // Atualize o Adapter com a nova lista de serviços
+//                categoriaAdapter.setCategoria(categorias);
+//                categoriaAdapter.notifyDataSetChanged();
+//            }
+//        });
+
+        categoriaViewModel = new ViewModelProvider(this).get(CategoriaViewModel.class);
+
+        categoriaAdapter = new CategoriaAdapter(TelaInicial.this, new ArrayList<>());
+
+        categoriaViewModel.getListaCategorias().observe(this, new Observer<List<Categoria>>() {
+            @Override
+            public void onChanged(List<Categoria> categorias) {
+                if (categoriaAdapter == null) {
+                    categoriaAdapter = new CategoriaAdapter(TelaInicial.this, categorias);
+                } else {
+                    categoriaAdapter.setCategoria(categorias);
+                    categoriaAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+
+        servicoViewModel = new ViewModelProvider(this).get(ServicoViewModel.class);
+        servicoAdapter = new ServicoAdapter(TelaInicial.this, new ArrayList<>(), categoriaViewModel, clienteViewModel);
+        QuadradoListaDados = findViewById(R.id.QuadradoListaDados);
+        QuadradoListaDados.setLayoutManager(new LinearLayoutManager(this));
+        QuadradoListaDados.setAdapter(servicoAdapter);
+
+        servicoViewModel.getListaServico().observe(this, new Observer<List<Servico>>() {
+            @Override
+            public void onChanged(List<Servico> servicos) {
+                // Atualize o Adapter com a nova lista de serviços
+                servicoAdapter.setServico(servicos);
+                servicoAdapter.notifyDataSetChanged();
+                QuadradoListaDados.setAdapter(servicoAdapter);
+                // Atualiza a altura do RecyclerView com base na quantidade de itens
+                int itemCount = servicos.size();
+                if (itemCount == 0) {
+                    QuadradoListaDados.getLayoutParams().height = 0;
+                }
+                QuadradoListaDados.requestLayout();
+                gerarDadosGrafico();
+            }
+        });
+
+        if (primeiraExecucao) {
             FundoGradiente = findViewById(R.id.FundoGradiente);
             GrupoIcones = findViewById(R.id.GrupoIcones);
             TelaInicial = findViewById(R.id.TelaInicial);
@@ -106,11 +187,9 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
             deixarInvisivelGrupoIcones(TelaInicial);
 
             AnimacaoDiminuirGradiente();
-            gerarDadosGrafico();
 
             primeiraExecucao = false;
         }
-
 
         buttonGerenciamentoClientes = findViewById(R.id.buttonGerenciamentoClientes);
         buttonGerenciamentoClientes.setOnClickListener(this);
@@ -121,10 +200,49 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         buttonTrocarParaViewDados.setOnClickListener(this);
         buttonGerenciamentoCategoria = findViewById(R.id.buttonGerenciamentoCategoria);
         buttonGerenciamentoCategoria.setOnClickListener(this);
+
+
     }
 
-    private void configurarGrafico(PieData data)
-    {
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Limpa observadores anteriores
+        categoriaViewModel.getListaCategorias().removeObservers(this);
+        servicoViewModel.getListaServico().removeObservers(this);
+
+        // Re-define as observações
+        categoriaViewModel.getListaCategorias().observe(this, new Observer<List<Categoria>>() {
+            @Override
+            public void onChanged(List<Categoria> categorias) {
+                if (categorias != null && !categorias.equals(categoriaAdapter.getCategoria())) {
+                    categoriaAdapter.setCategoria(categorias);
+                    categoriaAdapter.notifyDataSetChanged();
+                    QuadradoListaDados.setAdapter(servicoAdapter);
+                }
+            }
+        });
+
+
+        servicoViewModel.getListaServico().observe(this, new Observer<List<Servico>>() {
+            @Override
+            public void onChanged(List<Servico> servicos) {
+                if (servicos != null && !servicos.equals(servicoAdapter.getServicos())) {
+                    servicoAdapter.setServico(servicos);
+                    servicoAdapter.notifyDataSetChanged();
+                    gerarDadosGrafico();  // Atualiza o gráfico
+                }
+            }
+        });
+
+        // Atualiza os dados
+        categoriaViewModel.carregarCategorias();
+        servicoViewModel.carregarServicos();
+        gerarDadosGrafico(); // Garante a atualização do gráfico
+    }
+
+    private void configurarGrafico(PieData data) {
         // Configurações do gráfico
         grafico.setData(data);
         grafico.getDescription().setEnabled(false);
@@ -148,29 +266,40 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
     private void gerarDadosGrafico() {
         // Gerando dados aleatórios para o gráfico de pizza
         ArrayList<PieEntry> entries = new ArrayList<>();
-        Random random = new Random();
+        Map<String, Float> tipoServicoMap = new HashMap<>();
+        List<Servico> listaServicos = servicoAdapter.getServicos();
+        if (listaServicos != null && listaServicos.size() > 0) {
+            for (Servico servico : listaServicos) {
+                Float valor = servico.getValor().floatValue();
+                int tipoServico = servico.getTipoServico();
+                String tipoServicoNome = getNomeCategoriaById(tipoServico);
+                Log.d("tag", "Nome categoria " + tipoServicoNome + " valor: " + servico.getValor());
 
-        // Criando 3 setores com valores aleatórios
-        for (int i = 0; i < 3; i++) {
-            float valorAleatorio = random.nextInt(100) + 1; // Gera um valor entre 1 e 100
-            entries.add(new PieEntry(valorAleatorio, "Categoria " + (i + 1)));  // Adiciona o valor e o label
+                tipoServicoMap.put(tipoServicoNome, tipoServicoMap.getOrDefault(tipoServicoNome, 0f) + valor);
+            }
+
+            for (Map.Entry<String, Float> entry : tipoServicoMap.entrySet()) {
+                entries.add(new PieEntry(entry.getValue(), entry.getKey()));
+            }
+
+            PieDataSet dataSet = new PieDataSet(entries, "");
+            dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+            dataSet.setValueTextSize(12f);
+            PieData data = new PieData(dataSet);
+
+            configurarGrafico(data);
+            grafico.invalidate();
+
+        } else {
+            Log.d("tag", "Lista de serviços está vazia!");
         }
-
-        // Criando um conjunto de dados para o gráfico de pizza
-        PieDataSet dataSet = new PieDataSet(entries, "");
-        dataSet.setColors(ColorTemplate.COLORFUL_COLORS); // Define cores aleatórias para os setores
-        dataSet.setValueTextSize(12f);
-        PieData data = new PieData(dataSet);
-
-        configurarGrafico(data);
     }
 
-    private void animarGrafico()
-    {
+
+    private void animarGrafico() {
         // Animação suave para preencher o gráfico em 2 segundos
         grafico.animateXY(1000, 1000, Easing.Linear); // Animação em ambos os eixos (X e Y) com duração de 2 segundos e interpolação linear
     }
-
 
 
     @Override
@@ -185,24 +314,23 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
             intent.putExtra("botao_apertado", "categoria");
             startActivity(intent); // Inicia a nova Activity
         }
-//        else if (view.getId() == R.id.buttonGerenciamentoServico) {
-//            Intent intent = new Intent(TelaInicial.this, TelaGerenciamentoServico.class);
-//            startActivity(intent); // Inicia a nova Activity
-//        }
+        else if (view.getId() == R.id.buttonGerenciamentoServico) {
+            Intent intent = new Intent(TelaInicial.this, TelaGerenciamento.class);
+            intent.putExtra("botao_apertado", "servico");
+            startActivity(intent); // Inicia a nova Activity
+        }
         else if (view.getId() == R.id.setaBaixo) {
-            if (SwitcherDasInfosDoGrafico.getVisibility() == View.VISIBLE)
-            {
+            if (SwitcherDasInfosDoGrafico.getVisibility() == View.VISIBLE) {
                 animarQuadradoLista(false);
-            }
-            else if (SwitcherDasInfosDoGrafico.getVisibility() == View.GONE)
-            {
+                verificarPosicaoDoBotao();
+            } else if (SwitcherDasInfosDoGrafico.getVisibility() == View.GONE) {
                 animarQuadradoLista(true);
+                verificarPosicaoDoBotao();
             }
-        } else if(view.getId() == R.id.ButtonTrocarParaViewAnalise){
+        } else if (view.getId() == R.id.ButtonTrocarParaViewAnalise) {
             trocarParaMenuAnalise();
             analisarDadosIA();
-        }
-        else if(view.getId() == R.id.buttonTrocarParaViewDados){
+        } else if (view.getId() == R.id.buttonTrocarParaViewDados) {
             trocarParaMenuDados();
         }
 
@@ -302,8 +430,7 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         animator.start();
     }
 
-    private void deixarInvisivelGrupoIcones(View vaiSerInvisivel)
-    {
+    private void deixarInvisivelGrupoIcones(View vaiSerInvisivel) {
         vaiSerInvisivel.setVisibility(View.INVISIBLE);
     }
 
@@ -460,4 +587,38 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         }, delay);
     }
 
+    private void verificarPosicaoDoBotao() {
+        // Localize os elementos
+        Button buttonCategoria = findViewById(R.id.buttonGerenciamentoCategoria);
+        ScrollView scrollView = findViewById(R.id.scrollView);
+
+        // Obter posição do botão na tela
+        int[] location = new int[2];
+        buttonCategoria.getLocationOnScreen(location);
+
+        // Posição Y do botão
+        int botaoY = location[1];
+
+        // Obter altura da tela
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int alturaTela = metrics.heightPixels;
+
+        // Verificar se o botão está fora da tela
+        if (botaoY + buttonCategoria.getHeight() > alturaTela) {
+            // Fazer scroll para o botão ficar visível
+            scrollView.post(() -> scrollView.smoothScrollTo(0, buttonCategoria.getBottom()));
+        }
+    }
+
+    private String getNomeCategoriaById(int idCategoria) {
+        if (categoriaViewModel.getListaCategorias().getValue() != null) {
+            for (Categoria categoria : categoriaViewModel.getListaCategorias().getValue()) {
+                if (categoria.getId() == idCategoria) {
+                    return categoria.getNome();
+                }
+            }
+        }
+        return "Categoria desconhecida"; // Caso não encontre a categoria
+    }
 }
