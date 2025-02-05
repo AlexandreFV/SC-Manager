@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -79,6 +80,9 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
     private String valor;
     private TabLayout tabLayout;
 
+    private TextView textNaoHaCategorias;
+    private TextView textNaoHaClientes;
+    private TextView textNaoHaServicos;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +96,9 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
         recyclerViewClientes.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewCategorias.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewServicos.setLayoutManager(new LinearLayoutManager(this));
+        textNaoHaCategorias = findViewById(R.id.textNaoHaCategorias);
+        textNaoHaClientes = findViewById(R.id.textNaoHaClientes);
+        textNaoHaServicos = findViewById(R.id.textNaoHaServicos);
 
         clienteViewModel = new ViewModelProvider(this).get(ClienteViewModel.class);
         servicoViewModel = new ViewModelProvider(this).get(ServicoViewModel.class);
@@ -121,13 +128,14 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
                     recyclerViewClientes.setAdapter(clienteAdapter);
                 } else {
                     clienteAdapter.setCliente(clientes);
-                    clienteAdapter.notifyDataSetChanged();
                 }
 
                 // Atualiza a altura do RecyclerView com base na quantidade de itens
-                int itemCount = clientes.size();
-                if (itemCount == 0) {
+                if (clientes == null || clientes.isEmpty()) {
+                    textNaoHaClientes.setVisibility(View.VISIBLE);
                     recyclerViewClientes.getLayoutParams().height = 0;
+                } else {
+                    textNaoHaClientes.setVisibility(View.GONE);
                 }
                 recyclerViewClientes.requestLayout();
                 servicoViewModel.carregarServicos();
@@ -145,12 +153,13 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
                     recyclerViewCategorias.setAdapter(categoriaAdapter);
                 } else {
                     categoriaAdapter.setCategoria(categorias);
-                    categoriaAdapter.notifyDataSetChanged();
                 }
 
-                int itemCount = categorias.size();
-                if (itemCount == 0) {
+                if (categorias == null || categorias.isEmpty()) {
+                    textNaoHaCategorias.setVisibility(View.VISIBLE);
                     recyclerViewCategorias.getLayoutParams().height = 0;
+                } else {
+                    textNaoHaCategorias.setVisibility(View.GONE);
                 }
                 recyclerViewCategorias.requestLayout();
                 servicoViewModel.carregarServicos();
@@ -167,13 +176,14 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
                     recyclerViewServicos.setAdapter(servicoAdapter);
                 } else {
                     servicoAdapter.setServico(servicos);
-                    servicoAdapter.notifyDataSetChanged();
                 }
 
                 // Atualiza a altura do RecyclerView com base na quantidade de itens
-                int itemCount = servicos.size();
-                if (itemCount == 0) {
+                if (servicos == null || servicos.isEmpty()) {
+                    textNaoHaServicos.setVisibility(View.VISIBLE);
                     recyclerViewServicos.getLayoutParams().height = 0;
+                } else {
+                    textNaoHaServicos.setVisibility(View.GONE);
                 }
                 recyclerViewServicos.requestLayout();
             }
@@ -186,21 +196,21 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
                 String veioDe = vaiPara;
                 switch (tab.getPosition()) {
                     case 0:
-                        if(veioDe == "servico") direcao = "esquerda";animarTransicaoLayouts(LayoutServico,LayoutCategorias,direcao);
-                        if(veioDe == "cliente") direcao = "esquerda";animarTransicaoLayouts(LayoutClientes,LayoutCategorias,direcao);
-                        if(veioDe == "categoria")LayoutCategorias.setVisibility(View.VISIBLE);
+                        if(veioDe.equals("servico")) direcao = "esquerda";animarTransicaoLayouts(LayoutServico,LayoutCategorias,direcao);
+                        if(veioDe.equals("cliente")) direcao = "esquerda";animarTransicaoLayouts(LayoutClientes,LayoutCategorias,direcao);
+                        if(veioDe.equals("categoria"))LayoutCategorias.setVisibility(View.VISIBLE);
                         vaiPara = "categoria";
                         break;
                     case 1:
-                        if(veioDe == "servico") direcao = "esquerda";animarTransicaoLayouts(LayoutServico,LayoutClientes,direcao);
-                        if(veioDe == "categoria") direcao = "direita";animarTransicaoLayouts(LayoutCategorias,LayoutClientes,direcao);
-                        if(veioDe == "cliente")LayoutClientes.setVisibility(View.VISIBLE);
+                        if(veioDe.equals("servico")) direcao = "esquerda";animarTransicaoLayouts(LayoutServico,LayoutClientes,direcao);
+                        if(veioDe.equals("categoria")) direcao = "direita";animarTransicaoLayouts(LayoutCategorias,LayoutClientes,direcao);
+                        if(veioDe.equals("cliente"))LayoutClientes.setVisibility(View.VISIBLE);
                         vaiPara = "cliente";
                         break;
                     case 2:
-                        if(veioDe == "cliente") direcao = "direita";animarTransicaoLayouts(LayoutClientes,LayoutServico,direcao);
-                        if(veioDe == "categoria") direcao = "direita";animarTransicaoLayouts(LayoutCategorias,LayoutServico,direcao);
-                        if(veioDe == "servico")LayoutServico.setVisibility(View.VISIBLE);
+                        if(veioDe.equals("cliente")) direcao = "direita";animarTransicaoLayouts(LayoutClientes,LayoutServico,direcao);
+                        if(veioDe.equals("categoria")) direcao = "direita";animarTransicaoLayouts(LayoutCategorias,LayoutServico,direcao);
+                        if(veioDe.equals("servico"))LayoutServico.setVisibility(View.VISIBLE);
                         vaiPara = "servico";
                         break;
                 }
@@ -348,24 +358,26 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
                 animacaoFiltrarSaindoDeMaisOpcoes();
             }
         } else if (view.getId() == R.id.imageAdicionarLista) {
-            Toast.makeText(getBaseContext(), "apertou em adicionar", Toast.LENGTH_SHORT).show();
-            TelaAdicionarCategoriaClienteServico fragment = new TelaAdicionarCategoriaClienteServico();
-            Bundle bundle = new Bundle();
-            bundle.putString("veioDe",vaiPara);
-            fragment.setClienteViewModel(clienteViewModel);
-            fragment.setCategoriaViewModel(categoriaViewModel);
-            fragment.setServicoViewModel(servicoViewModel);
-            fragment.setArguments(bundle);
-            fragment.show(getSupportFragmentManager(), fragment.getTag());
+            if (getSupportFragmentManager().findFragmentByTag("BottomSheetDialog") == null) {
+                {
+                    TelaAdicionarCategoriaClienteServico fragment = new TelaAdicionarCategoriaClienteServico();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("veioDe",vaiPara);
+                    fragment.setArguments(bundle);
+                    // Verifica se o fragmento já está adicionado antes de exibi-lo
+                    fragment.show(getSupportFragmentManager(), "BottomSheetDialog");
+                }
+            }
 
         } else if (view.getId() == R.id.imageFiltrarLista) {
-            Toast.makeText(getBaseContext(), "apertou em filtrar", Toast.LENGTH_SHORT).show();
-            TelaFiltrarRegistrosListas fragment = new TelaFiltrarRegistrosListas();
+            if (getSupportFragmentManager().findFragmentByTag("BottomSheetDialog") == null)
+            {
+                TelaFiltrarRegistrosListas fragment = new TelaFiltrarRegistrosListas();
             Bundle bundle = new Bundle();
             bundle.putString("veioDe",vaiPara);
             fragment.setArguments(bundle);
-            fragment.show(getSupportFragmentManager(), fragment.getTag());
-
+                fragment.show(getSupportFragmentManager(), "BottomSheetDialog");
+            }
         }
     }
 
@@ -536,58 +548,69 @@ public class TelaGerenciamento extends AppCompatActivity implements View.OnClick
 
     //Funcao chamada ao clicar na lupa do recyclerView (tela detalhes cliente)
     public void onClienteClicked(Cliente cliente) {
-        // Aqui você pode fazer algo com o cliente clicado, como pegar o ID
-        long clienteId = cliente.getId();  // Ou qualquer outra propriedade do cliente
-        String ClienteNome = cliente.getNome();
-        String ClieneTelefone = cliente.getTelefone();
+        if (getSupportFragmentManager().findFragmentByTag("BottomSheetDialog") == null) {
+            // Aqui você pode fazer algo com o cliente clicado, como pegar o ID
+            long clienteId = cliente.getId();  // Ou qualquer outra propriedade do cliente
+            String ClienteNome = cliente.getNome();
+            String ClieneTelefone = cliente.getTelefone();
 
-        // Passa o ID do cliente para o BottomSheet usando um Bundle
-        Bundle bundle = new Bundle();
-        bundle.putLong("clienteId", clienteId);
-        bundle.putString("clienteNome", ClienteNome);
-        bundle.putString("clienteTelefone", ClieneTelefone);
+            // Passa o ID do cliente para o BottomSheet usando um Bundle
+            Bundle bundle = new Bundle();
+            bundle.putLong("clienteId", clienteId);
+            bundle.putString("clienteNome", ClienteNome);
+            bundle.putString("clienteTelefone", ClieneTelefone);
 
-        // Exemplo: Você pode iniciar uma nova Activity com os detalhes do cliente
-        BottomSheetDetalhesCliente fragment = new BottomSheetDetalhesCliente();
-        fragment.setArguments(bundle);
-        fragment.show(getSupportFragmentManager(), fragment.getTag());
+            // Exemplo: Você pode iniciar uma nova Activity com os detalhes do cliente
+            BottomSheetDetalhesCliente fragment = new BottomSheetDetalhesCliente();
+
+            fragment.show(getSupportFragmentManager(), "BottomSheetDialog");
+            fragment.setArguments(bundle);
+        }
     }
 
     public void onCategoriaClicked(Categoria categoria) {
-        long categoriaId = categoria.getId();
-        String categoriaNome = categoria.getNome();
+        if (getSupportFragmentManager().findFragmentByTag("BottomSheetDialog") == null)
+        {
+            BottomSheetDetalhesCategoria fragment = new BottomSheetDetalhesCategoria();
 
-        Bundle bundle = new Bundle();
-        bundle.putLong("categoriaId", categoriaId);
-        bundle.putString("categoriaNome", categoriaNome);
+            long categoriaId = categoria.getId();
+            String categoriaNome = categoria.getNome();
 
-        // Exemplo: Você pode iniciar uma nova Activity com os detalhes do cliente
-        BottomSheetDetalhesCategoria fragment = new BottomSheetDetalhesCategoria();
-        fragment.setArguments(bundle);
-        fragment.show(getSupportFragmentManager(), fragment.getTag());
+            Bundle bundle = new Bundle();
+            bundle.putLong("categoriaId", categoriaId);
+            bundle.putString("categoriaNome", categoriaNome);
+
+            // Exemplo: Você pode iniciar uma nova Activity com os detalhes do cliente
+            fragment.setArguments(bundle);
+            fragment.show(getSupportFragmentManager(), "BottomSheetDialog");
+        }
     }
 
     public void onServicoClicked(Servico servico) {
-        long servicoId = servico.getId();
-        Integer tipoServico = servico.getTipoServico();
-        Integer idCliente = servico.getIdCliente();
-        Double valor = servico.getValor();
-        String dataAceiteServico = servico.getDataAceiteServico();
-        Integer estado = servico.getEstado();
-        String dataPagamento = servico.getDataPagamento();
+        if (getSupportFragmentManager().findFragmentByTag("BottomSheetDialog") == null)
+        {
+            BottomSheetDetalhesServico fragment = new BottomSheetDetalhesServico();
 
-        Bundle bundle = new Bundle();
-        bundle.putLong("servicoId", servicoId);
-        bundle.putInt("tipoServico",tipoServico);
-        bundle.putInt("idCliente",idCliente);
-        bundle.putDouble("valor",valor);
-        bundle.putString("dataAceiteServico",dataAceiteServico);
-        bundle.putInt("estado",estado);
-        bundle.putString("dataPagamento",dataPagamento);
+            long servicoId = servico.getId();
+            Integer tipoServico = servico.getTipoServico();
+            Integer idCliente = servico.getIdCliente();
+            Double valor = servico.getValor();
+            String dataAceiteServico = servico.getDataAceiteServico();
+            Integer estado = servico.getEstado();
+            String dataPagamento = servico.getDataPagamento();
 
-        // Exemplo: Você pode iniciar uma nova Activity com os detalhes do cliente
-        BottomSheetDetalhesServico fragment = new BottomSheetDetalhesServico();
-        fragment.setArguments(bundle);
-        fragment.show(getSupportFragmentManager(), fragment.getTag());
+            Bundle bundle = new Bundle();
+            bundle.putLong("servicoId", servicoId);
+            bundle.putInt("tipoServico", tipoServico);
+            bundle.putInt("idCliente", idCliente);
+            bundle.putDouble("valor", valor);
+            bundle.putString("dataAceiteServico", dataAceiteServico);
+            bundle.putInt("estado", estado);
+            bundle.putString("dataPagamento", dataPagamento);
+
+            // Exemplo: Você pode iniciar uma nova Activity com os detalhes do cliente
+            fragment.setArguments(bundle);
+            fragment.show(getSupportFragmentManager(), "BottomSheetDialog");
+        }
     }
 }

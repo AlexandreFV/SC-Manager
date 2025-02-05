@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.example.scmanager.Gerenciamento.Objetos.Categoria;
+import com.example.scmanager.Gerenciamento.Objetos.Cliente;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -185,7 +186,7 @@ public class CategoriaRepository {
             }
         });
     }
-
+    
     // Callback para operações de categoria
     public interface CategoriaCallback {
         void onResult(long result); // 1 = sucesso, 0 = falha, -1 = já existe

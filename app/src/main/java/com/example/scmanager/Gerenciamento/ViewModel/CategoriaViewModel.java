@@ -1,6 +1,7 @@
 package com.example.scmanager.Gerenciamento.ViewModel;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
@@ -14,6 +15,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.scmanager.BancoDeDados.CategoriaRepository;
 import com.example.scmanager.Gerenciamento.Objetos.Categoria;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class CategoriaViewModel extends AndroidViewModel {
@@ -80,13 +83,24 @@ public class CategoriaViewModel extends AndroidViewModel {
     }
 
     public void carregarCategorias() {
+        SharedPreferences prefs = getApplication().getSharedPreferences("PreferenciasApp", getApplication().MODE_PRIVATE);
+        String ordemSalva = prefs.getString("ordemCategoria", "CRESCENTE"); // Padrão: CRESCENTE
+
         categoriaRepository.CarregarCategoriasAsync(new CategoriaRepository.CategoriaListCallback() {
             @Override
             public void onCategoriasLoaded(List<Categoria> categorias) {
-                listaCategorias.setValue(categorias);
+                if (ordemSalva.equals("CRESCENTE")) {
+                    Collections.sort(categorias, Comparator.comparing(Categoria::getNome)); // Ordem alfabética crescente
+                } else if (ordemSalva.equals("DECRESCENTE")) {
+                    Collections.sort(categorias, (c1, c2) -> c2.getNome().compareTo(c1.getNome())); // Ordem decrescente
+                }
+
+                listaCategorias.postValue(categorias); // Atualiza a LiveData
             }
         });
     }
+
+
 
 
     private void showToast(String mensagem) {
@@ -95,3 +109,4 @@ public class CategoriaViewModel extends AndroidViewModel {
         );
     }
 }
+

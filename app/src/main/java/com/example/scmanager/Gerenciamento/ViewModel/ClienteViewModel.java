@@ -1,6 +1,7 @@
 package com.example.scmanager.Gerenciamento.ViewModel;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
@@ -11,8 +12,11 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.scmanager.BancoDeDados.ClienteRepository;
+import com.example.scmanager.Gerenciamento.Objetos.Categoria;
 import com.example.scmanager.Gerenciamento.Objetos.Cliente;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ClienteViewModel extends AndroidViewModel {
@@ -81,19 +85,39 @@ public class ClienteViewModel extends AndroidViewModel {
     }
 
 
-    private void carregarClientes() {
+    public void carregarClientes() {
+        SharedPreferences prefs = getApplication().getSharedPreferences("PreferenciasApp", getApplication().MODE_PRIVATE);
+        String ordemSalvaNome = prefs.getString("ordemClienteNome", "CRESCENTE"); // Padrão: CRESCENTE
+        String ordemSalvaTelefone = prefs.getString("ordemClienteTelefone", "CRESCENTE"); // Padrão: CRESCENTE
+
         clienteRepository.carregarClientesDoBancoAsync(new ClienteRepository.ClienteListCallback() {
             @Override
             public void onClientesLoaded(List<Cliente> clientes) {
-                listaClientes.setValue(clientes);
+                // Ordena primeiro pelo nome
+                if (ordemSalvaNome.equals("CRESCENTE")) {
+                    Collections.sort(clientes, (c1, c2) -> c1.getNome().compareToIgnoreCase(c2.getNome()));
+                } else if (ordemSalvaNome.equals("DECRESCENTE")) {
+                    Collections.sort(clientes, (c1, c2) -> c2.getNome().compareToIgnoreCase(c1.getNome()));
+                }
+
+                // Depois, ordena pelo telefone, mantendo a ordem do nome
+                if (ordemSalvaTelefone.equals("CRESCENTE")) {
+                    Collections.sort(clientes, Comparator.comparing(Cliente::getTelefone));
+                } else if (ordemSalvaTelefone.equals("DECRESCENTE")) {
+                    Collections.sort(clientes, (c1, c2) -> c2.getTelefone().compareTo(c1.getTelefone()));
+                }
+
+                listaClientes.postValue(clientes); // Atualiza a LiveData
             }
         });
     }
+
 
     private void showToast(String mensagem) {
         new android.os.Handler(Looper.getMainLooper()).post(() ->
                 Toast.makeText(getApplication().getBaseContext(), mensagem, Toast.LENGTH_SHORT).show()
         );
     }
-
 }
+
+

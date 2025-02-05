@@ -7,10 +7,12 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Application;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -35,14 +37,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.scmanager.BuildConfig;
 import com.example.scmanager.Gerenciamento.Adapter.CategoriaAdapter;
+import com.example.scmanager.Gerenciamento.Adapter.ClienteAdapter;
 import com.example.scmanager.Gerenciamento.Adapter.ServicoAdapter;
 import com.example.scmanager.Gerenciamento.Objetos.Categoria;
+import com.example.scmanager.Gerenciamento.Objetos.Cliente;
 import com.example.scmanager.Gerenciamento.Objetos.Servico;
 import com.example.scmanager.Gerenciamento.Tela.TelaGerenciamento;
 import com.example.scmanager.Gerenciamento.ViewModel.CategoriaViewModel;
 import com.example.scmanager.Gerenciamento.ViewModel.ClienteViewModel;
 import com.example.scmanager.Gerenciamento.ViewModel.ServicoViewModel;
 import com.example.scmanager.R;
+import com.example.scmanager.TelaFiltrarRegistrosListas;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -67,6 +72,16 @@ import java.util.concurrent.Executors;
 
 
 public class TelaInicial extends AppCompatActivity implements View.OnClickListener {
+    private String analiseTexto;
+    private Float totalRecebido = 0f;
+    private String clienteMaiorCompra = "";
+    private String clienteMenorCompra = "";
+    private Float maiorVenda = 0f;
+    private Float menorVenda = Float.MAX_VALUE;
+    private String dataMaisVendas = "";
+    private String dataMenosVendas = "";
+    private Float maiorVendaDia = 0f;
+    private Float menorVendaDia = Float.MAX_VALUE;
 
     private ConstraintLayout GrupoIcones;
 
@@ -100,9 +115,14 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
     private ServicoViewModel servicoViewModel;
     private ServicoAdapter servicoAdapter;
     private CategoriaAdapter categoriaAdapter;
+    private ClienteAdapter clienteAdapter;
     private CategoriaViewModel categoriaViewModel;
     private ClienteViewModel clienteViewModel;
     private RecyclerView QuadradoListaDados;
+    private TextView textNaoHaDadosGrafico;
+    private boolean temDadosServico = false;
+    private Button buttonAnalisarGrafico;
+    private Button buttonFiltrar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Handle the splash screen transition.
@@ -119,28 +139,21 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         GrupoDados = findViewById(R.id.GrupoDados);
         GrupoAnalise = findViewById(R.id.GrupoAnalise);
         textRespostaIA = findViewById(R.id.textRespostaIA);
+        textNaoHaDadosGrafico = findViewById(R.id.textNaoHaDadosGrafico);
+        buttonAnalisarGrafico = findViewById(R.id.buttonAnalisarGrafico);
 
+        clienteViewModel = new ViewModelProvider(this).get(ClienteViewModel.class);
+        clienteAdapter = new ClienteAdapter(TelaInicial.this, new ArrayList<>());
 
-        clienteViewModel = new ViewModelProvider(
-                this, // 'this' é a Activity, que implementa ViewModelStoreOwner
-                new ViewModelProvider.AndroidViewModelFactory(getApplication())
-        ).get(ClienteViewModel.class);
-
-
-//        Alterar Depois para cliente
-//        categoriaAdapter = new CategoriaAdapter(TelaInicial.this, new ArrayList<>());
-//
-//        categoriaViewModel.getListaCategorias().observe(this, new Observer<List<Categoria>>() {
-//            @Override
-//            public void onChanged(List<Categoria> categorias) {
-//                // Atualize o Adapter com a nova lista de serviços
-//                categoriaAdapter.setCategoria(categorias);
-//                categoriaAdapter.notifyDataSetChanged();
-//            }
-//        });
+        clienteViewModel.getListaClientes().observe(this, new Observer<List<Cliente>>() {
+            @Override
+            public void onChanged(List<Cliente> clientes) {
+                // Atualize o Adapter com a nova lista de serviços
+                clienteAdapter.setCliente(clientes);
+            }
+        });
 
         categoriaViewModel = new ViewModelProvider(this).get(CategoriaViewModel.class);
-
         categoriaAdapter = new CategoriaAdapter(TelaInicial.this, new ArrayList<>());
 
         categoriaViewModel.getListaCategorias().observe(this, new Observer<List<Categoria>>() {
@@ -150,7 +163,6 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
                     categoriaAdapter = new CategoriaAdapter(TelaInicial.this, categorias);
                 } else {
                     categoriaAdapter.setCategoria(categorias);
-                    categoriaAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -164,17 +176,30 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         servicoViewModel.getListaServico().observe(this, new Observer<List<Servico>>() {
             @Override
             public void onChanged(List<Servico> servicos) {
+                Log.d("TelaInicial", "Serviços atualizados: " + servicos);
+
                 // Atualize o Adapter com a nova lista de serviços
                 servicoAdapter.setServico(servicos);
-                servicoAdapter.notifyDataSetChanged();
                 QuadradoListaDados.setAdapter(servicoAdapter);
-                // Atualiza a altura do RecyclerView com base na quantidade de itens
-                int itemCount = servicos.size();
-                if (itemCount == 0) {
-                    QuadradoListaDados.getLayoutParams().height = 0;
+
+                // Atualiza a variável com base na quantidade de serviços
+                temDadosServico = servicos != null && !servicos.isEmpty();
+                if(temDadosServico)
+                {
+                    grafico.setVisibility(View.VISIBLE);
+                    textNaoHaDadosGrafico.setVisibility(View.INVISIBLE);
+                    setaBaixo.setEnabled(true);
+                    QuadradoListaDados.postDelayed(() -> gerarDadosGrafico(), 100);
+                } else {
+                    grafico.setVisibility(View.INVISIBLE);
+                    textNaoHaDadosGrafico.setVisibility(View.VISIBLE);
+                    setaBaixo.setEnabled(false);
                 }
+
                 QuadradoListaDados.requestLayout();
-                gerarDadosGrafico();
+
+                // Aguarda a interface atualizar antes de gerar o gráfico
+                QuadradoListaDados.postDelayed(() -> gerarDadosGrafico(), 100);
             }
         });
 
@@ -191,17 +216,19 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
             primeiraExecucao = false;
         }
 
+        buttonFiltrar = findViewById(R.id.buttonFiltrar);
+
         buttonGerenciamentoClientes = findViewById(R.id.buttonGerenciamentoClientes);
         buttonGerenciamentoClientes.setOnClickListener(this);
         buttonGerenciamentoServico = findViewById(R.id.buttonGerenciamentoServico);
         buttonGerenciamentoServico.setOnClickListener(this);
         setaBaixo.setOnClickListener(this);
+        buttonFiltrar.setOnClickListener(this);
         buttonTrocarParaViewAnalise.setOnClickListener(this);
         buttonTrocarParaViewDados.setOnClickListener(this);
         buttonGerenciamentoCategoria = findViewById(R.id.buttonGerenciamentoCategoria);
         buttonGerenciamentoCategoria.setOnClickListener(this);
-
-
+        buttonAnalisarGrafico.setOnClickListener(this);
     }
 
     @Override
@@ -216,9 +243,8 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         categoriaViewModel.getListaCategorias().observe(this, new Observer<List<Categoria>>() {
             @Override
             public void onChanged(List<Categoria> categorias) {
-                if (categorias != null && !categorias.equals(categoriaAdapter.getCategoria())) {
+                if (categorias !=   null && !categorias.equals(categoriaAdapter.getCategoria())) {
                     categoriaAdapter.setCategoria(categorias);
-                    categoriaAdapter.notifyDataSetChanged();
                     QuadradoListaDados.setAdapter(servicoAdapter);
                 }
             }
@@ -229,17 +255,42 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
             @Override
             public void onChanged(List<Servico> servicos) {
                 if (servicos != null && !servicos.equals(servicoAdapter.getServicos())) {
+                    Log.d("TelaInicial", "Serviços atualizados: " + servicos);
                     servicoAdapter.setServico(servicos);
-                    servicoAdapter.notifyDataSetChanged();
-                    gerarDadosGrafico();  // Atualiza o gráfico
+                    QuadradoListaDados.setAdapter(servicoAdapter);
+                    // Atualiza a variável com base na quantidade de serviços
+                    temDadosServico = servicos != null && !servicos.isEmpty();
+                    // Aguarda a interface atualizar antes de gerar o gráfico
+                    if(temDadosServico)
+                    {
+                        grafico = findViewById(R.id.grafico);
+                        grafico.setVisibility(View.VISIBLE);
+
+                        textNaoHaDadosGrafico = findViewById(R.id.textNaoHaDadosGrafico);
+                        textNaoHaDadosGrafico.setVisibility(View.INVISIBLE);
+
+                        setaBaixo = findViewById(R.id.setaBaixo);
+                        setaBaixo.setEnabled(true);
+
+                        QuadradoListaDados.postDelayed(() -> gerarDadosGrafico(), 100);
+                    } else {
+                        grafico = findViewById(R.id.grafico);
+                        grafico.setVisibility(View.INVISIBLE);
+
+                        textNaoHaDadosGrafico = findViewById(R.id.textNaoHaDadosGrafico);
+                        textNaoHaDadosGrafico.setVisibility(View.VISIBLE);
+
+                        setaBaixo = findViewById(R.id.setaBaixo);
+                        setaBaixo.setEnabled(false);
+                    }
                 }
             }
         });
 
-        // Atualiza os dados
         categoriaViewModel.carregarCategorias();
-        servicoViewModel.carregarServicos();
-        gerarDadosGrafico(); // Garante a atualização do gráfico
+        clienteViewModel.carregarClientes();
+        servicoViewModel.carregarServicosInicio();
+
     }
 
     private void configurarGrafico(PieData data) {
@@ -268,16 +319,76 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         ArrayList<PieEntry> entries = new ArrayList<>();
         Map<String, Float> tipoServicoMap = new HashMap<>();
         List<Servico> listaServicos = servicoAdapter.getServicos();
+
+        // Variáveis de análise
+         totalRecebido = 0f;
+         clienteMaiorCompra = "";
+         clienteMenorCompra = "";
+         maiorVenda = 0f;
+         menorVenda = Float.MAX_VALUE;
+         dataMaisVendas = "";
+         dataMenosVendas = "";
+         maiorVendaDia = 0f;
+         menorVendaDia = Float.MAX_VALUE;
+        SharedPreferences prefs = getApplication().getSharedPreferences("PreferenciasApp", getApplication().MODE_PRIVATE);
+
         if (listaServicos != null && listaServicos.size() > 0) {
+            String ordemCategoriaOuCliente = prefs.getString("ordemCategoriaOuCliente", "Categorias");
+
+            Map<String, Float> clienteMap = new HashMap<>();
+            Map<String, Float> diaMap = new HashMap<>();
+
             for (Servico servico : listaServicos) {
                 Float valor = servico.getValor().floatValue();
-                int tipoServico = servico.getTipoServico();
-                String tipoServicoNome = getNomeCategoriaById(tipoServico);
-                Log.d("tag", "Nome categoria " + tipoServicoNome + " valor: " + servico.getValor());
+                String chaveAgrupamento;
+                String cliente = getNomeClienteById(servico.getIdCliente());
+                String dia = servico.getDataAceiteServico();  // Assumindo que o método getData() retorna a data da venda
 
-                tipoServicoMap.put(tipoServicoNome, tipoServicoMap.getOrDefault(tipoServicoNome, 0f) + valor);
+                // Atualizar o total recebido no período
+                totalRecebido += valor;
+
+                // Calcular o cliente com maior e menor compra
+                clienteMap.put(cliente, clienteMap.getOrDefault(cliente, 0f) + valor);
+
+                // Calcular a data com maior e menor somatório de vendas
+                diaMap.put(dia, diaMap.getOrDefault(dia, 0f) + valor);
+
+                // Agrupar por cliente ou por categoria baseado na preferência
+                if ("Clientes".equals(ordemCategoriaOuCliente)) {
+                    chaveAgrupamento = cliente;
+                } else {
+                    int tipoServicoId = servico.getTipoServico();
+                    chaveAgrupamento = getNomeCategoriaById(tipoServicoId);
+                }
+
+                tipoServicoMap.put(chaveAgrupamento, tipoServicoMap.getOrDefault(chaveAgrupamento, 0f) + valor);
             }
 
+            // Encontrar o cliente com maior e menor compra
+            for (Map.Entry<String, Float> entry : clienteMap.entrySet()) {
+                if (entry.getValue() > maiorVenda) {
+                    maiorVenda = entry.getValue();
+                    clienteMaiorCompra = entry.getKey();
+                }
+                if (entry.getValue() < menorVenda) {
+                    menorVenda = entry.getValue();
+                    clienteMenorCompra = entry.getKey();
+                }
+            }
+
+            // Encontrar o dia com maior e menor somatório de vendas
+            for (Map.Entry<String, Float> entry : diaMap.entrySet()) {
+                if (entry.getValue() > maiorVendaDia) {
+                    maiorVendaDia = entry.getValue();
+                    dataMaisVendas = entry.getKey();
+                }
+                if (entry.getValue() < menorVendaDia) {
+                    menorVendaDia = entry.getValue();
+                    dataMenosVendas = entry.getKey();
+                }
+            }
+
+            // Agora, para o gráfico de pizza, transformamos os dados agrupados em entradas para o gráfico
             for (Map.Entry<String, Float> entry : tipoServicoMap.entrySet()) {
                 entries.add(new PieEntry(entry.getValue(), entry.getKey()));
             }
@@ -293,7 +404,28 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         } else {
             Log.d("tag", "Lista de serviços está vazia!");
         }
+
+        String ordemDeData = prefs.getString("ordemDeData", "");
+        String ordemAteData = prefs.getString("ordemAteData", "");
+        String ordemEstadoInicio = prefs.getString("ordemEstadoInicio", "Todos");
+        String ordemCategoriaOuCliente = prefs.getString("ordemCategoriaOuCliente", "Categorias");
+
+        // Criar o conteúdo que será enviado ao Gemini
+        analiseTexto = "Aqui estão os resultados da análise do gráfico:\n";
+
+        analiseTexto += "Filtros utilizados:\n";
+        analiseTexto += "Período: " + ordemDeData + " até " + ordemAteData + "\n";
+        analiseTexto += "Estado: " + ordemEstadoInicio + "\n";
+        analiseTexto += "Agrupamento: " + (ordemCategoriaOuCliente.equals("Clientes") ? "Por Cliente" : "Por Categoria") + "\n";
+
+
+        analiseTexto += "Total a receber: " + totalRecebido + "\n";
+        analiseTexto += "Cliente com maior compra: " + clienteMaiorCompra + " - " + maiorVenda + "\n";
+        analiseTexto += "Cliente com menor compra: " + clienteMenorCompra + " - " + menorVenda + "\n";
+        analiseTexto += "Data com maior somatório de vendas: " + dataMaisVendas + " - " + maiorVendaDia + "\n";
+        analiseTexto += "Data com menor somatório de vendas: " + dataMenosVendas + " - " + menorVendaDia + "\n";
     }
+
 
 
     private void animarGrafico() {
@@ -329,9 +461,16 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
             }
         } else if (view.getId() == R.id.ButtonTrocarParaViewAnalise) {
             trocarParaMenuAnalise();
-            analisarDadosIA();
         } else if (view.getId() == R.id.buttonTrocarParaViewDados) {
             trocarParaMenuDados();
+        } else if (view.getId() == R.id.buttonAnalisarGrafico){
+            analisarDadosIA();
+        } else if (view.getId() == R.id.buttonFiltrar){
+            TelaFiltrarServicosInicial fragment = new TelaFiltrarServicosInicial();
+            Bundle bundle = new Bundle();
+            bundle.putString("veioDe-", "servico");
+            fragment.setArguments(bundle);
+            fragment.show(getSupportFragmentManager(), "BottomSheetDialog");
         }
 
     }
@@ -387,8 +526,8 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
     }
 
     private void animarQuadradoLista(boolean expandir) {
-        int start = expandir ? -400 : 0;
-        int end = expandir ? 0 : -400;
+        int start = expandir ? -500 : 0;
+        int end = expandir ? 0 : -500;
 
         // Configura o animador
         ValueAnimator animator = ValueAnimator.ofInt(start, end);
@@ -404,7 +543,7 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
             SwitcherDasInfosDoGrafico.setLayoutParams(params);
 
             // Ajusta a altura conforme o valor da animação
-            int altura = 400 + topMargin; // Ajuste a altura conforme necessário
+            int altura = 500 + topMargin; // Ajuste a altura conforme necessário
             SwitcherDasInfosDoGrafico.getLayoutParams().height = Math.max(altura, 0); // Garante altura mínima de 0
             SwitcherDasInfosDoGrafico.requestLayout();
         });
@@ -457,8 +596,16 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                grafico.setVisibility(View.VISIBLE);
-                animarGrafico();
+                if(temDadosServico)
+                {
+                    grafico.setVisibility(View.VISIBLE);
+                    textNaoHaDadosGrafico.setVisibility(View.INVISIBLE);
+                    setaBaixo.setEnabled(true);
+                    animarGrafico();
+                } else {
+                    textNaoHaDadosGrafico.setVisibility(View.VISIBLE);
+                    setaBaixo.setEnabled(false);
+                }
             }
         });
     }
@@ -537,32 +684,54 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
     }
 
     private void analisarDadosIA() {
-        // The Gemini 1.5 models are versatile and work with both text-only and multimodal prompts
+        // Create GenerativeModel instance
         GenerativeModel gm = new GenerativeModel(
-                /* modelName */ "gemini-1.5-flash",
-                // Access your API key as a Build Configuration variable
+                "gemini-2.0-flash-exp",
                 BuildConfig.GEMINI_API_KEY
         );
         GenerativeModelFutures model = GenerativeModelFutures.from(gm);
 
         Content content = new Content.Builder()
-                .addText("Me conte uma curiosidade sobre IA")
+                .addText(analiseTexto)
                 .build();
 
         ListenableFuture<GenerateContentResponse> response = model.generateContent(content);
+
+        // Retry logic with a maximum of 3 attempts
+        retryRequest(response, 3);
+    }
+
+    private void retryRequest(ListenableFuture<GenerateContentResponse> response, int maxRetries) {
         Futures.addCallback(response, new FutureCallback<GenerateContentResponse>() {
+            private int attempts = 0;
+
             @Override
             public void onSuccess(GenerateContentResponse result) {
                 String resultText = result.getText();
-                // Use Handler to run on the main thread for API < 28
                 new Handler(Looper.getMainLooper()).post(() -> animateTextTyping(resultText, textRespostaIA));
             }
 
             @Override
             public void onFailure(Throwable t) {
                 t.printStackTrace();
+                if (attempts < maxRetries) {
+                    attempts++;
+                    Log.w("IA Error", "Retrying attempt " + attempts + "...");
+                    // Retry the request after a delay (e.g., 2 seconds)
+                    Executors.newSingleThreadExecutor().submit(() -> {
+                        try {
+                            Thread.sleep(2000); // Delay before retry
+                            retryRequest(response, maxRetries);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                } else {
+                    Log.e("IA Error", "Failed after " + maxRetries + " attempts.");
+                    // Optionally, show a user-friendly error message or handle accordingly
+                }
             }
-        }, Executors.newSingleThreadExecutor()); // Substitui `getMainExecutor` por um Executor customizado
+        }, Executors.newSingleThreadExecutor());
     }
 
 
@@ -581,11 +750,17 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
                     displayedText.append(textArray[index[0]]);
                     textView.setText(displayedText.toString());
                     index[0]++;
+
+                    // Forçar o ScrollView a rolar até o final
+                    ScrollView scrollView = findViewById(R.id.scrollViewGemini);
+                    scrollView.post(() -> scrollView.fullScroll(ScrollView.FOCUS_DOWN));
+
                     handler.postDelayed(this, delay);
                 }
             }
         }, delay);
     }
+
 
     private void verificarPosicaoDoBotao() {
         // Localize os elementos
@@ -620,5 +795,15 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
             }
         }
         return "Categoria desconhecida"; // Caso não encontre a categoria
+    }
+    private String getNomeClienteById(int idCliente) {
+        if (clienteViewModel.getListaClientes().getValue() != null) {
+            for (Cliente cliente : clienteViewModel.getListaClientes().getValue()) {
+                if (cliente.getId() == idCliente) {
+                    return cliente.getNome();
+                }
+            }
+        }
+        return "Cliente desconhecido"; // Caso não encontre a categoria
     }
 }

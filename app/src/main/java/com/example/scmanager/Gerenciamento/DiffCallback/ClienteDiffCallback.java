@@ -36,9 +36,7 @@ public class ClienteDiffCallback extends DiffUtil.Callback{
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
         // Verifica se o conteúdo dos itens é o mesmo
-        Cliente oldCliente = oldList.get(oldItemPosition);
-        Cliente newCliente = newList.get(newItemPosition);
-        return oldCliente.equals(newCliente);
+        return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
     }
 
     @Override

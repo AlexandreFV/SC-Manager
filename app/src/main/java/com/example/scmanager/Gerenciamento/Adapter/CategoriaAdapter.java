@@ -81,7 +81,8 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.Cate
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
 
         // Atualiza a lista de categorias
-        this.ListaCategorias = listaCategorias;
+        this.ListaCategorias.clear();
+        this.ListaCategorias.addAll(listaCategorias);
 
         // Aplica as mudanças ao RecyclerView
         diffResult.dispatchUpdatesTo(this);  // Notifica o RecyclerView sobre as mudanças
@@ -101,14 +102,4 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.Cate
         }
 
     }
-
-    // Metodo para atualizar os dados
-    public void atualizarCategorias(List<Categoria> novasCategorias) {
-        setCategoria(novasCategorias); // Use o metodo `setCategoria` para atualizar de forma otimizada
-    }
-
-    public void setData(List<Categoria> categorias) {
-        setCategoria(categorias);  // Use o `setCategoria` em vez de limpar e adicionar diretamente
-    }
-
 }

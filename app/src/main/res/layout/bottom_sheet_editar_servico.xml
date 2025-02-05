@@ -284,6 +284,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewEditarCategoria2" />
 
+    <EditText
+        android:id="@+id/editTextIdCliente2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"></EditText>
+
+    <EditText
+        android:id="@+id/editTextIdCategoria2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"></EditText>
+
     <View
         android:id="@+id/linhaTopo6"
         android:layout_width="40dp"

@@ -122,38 +122,44 @@ public class BottomSheetDetalhesServico extends BottomSheetDialogFragment implem
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.buttonExcluirServico) {
+            if (getParentFragmentManager().findFragmentByTag("BottomSheetDialogFragment") == null)
+            {
             // Cria o Bundle com os dados do cliente
             Bundle bundle = new Bundle();
             bundle.putLong("servicoId", servicoId);
-            bundle.putInt("tipoServico",tipoServico);
-            bundle.putInt("idCliente",idCliente);
-            bundle.putDouble("valor",valor);
-            bundle.putString("dataAceiteServico",dataAceiteServico);
-            bundle.putInt("estado",estado);
-            bundle.putString("dataPagamento",dataPagamento);
+            bundle.putInt("tipoServico", tipoServico);
+            bundle.putInt("idCliente", idCliente);
+            bundle.putDouble("valor", valor);
+            bundle.putString("dataAceiteServico", dataAceiteServico);
+            bundle.putInt("estado", estado);
+            bundle.putString("dataPagamento", dataPagamento);
             // Cria o BottomSheetDeletarCliente e passa os dados
             BottomSheetDeletarServico fragment = new BottomSheetDeletarServico();
             fragment.setArguments(bundle); // Passa os dados para o fragment
             fragment.setOnExclusaoConfirmadaListener(this); // Defina o listener
             // Exibe o BottomSheetDeletarCliente
-            fragment.show(getParentFragmentManager(), fragment.getTag());
-        } else if (v.getId() == R.id.buttonEditarServico){
+            fragment.show(getParentFragmentManager(), "BottomSheetDialogFragment");
+            }
+        } else if (v.getId() == R.id.buttonEditarServico) {
+            if (getParentFragmentManager().findFragmentByTag("BottomSheetDialogFragment") == null)
+            {
             // Cria o Bundle com os dados do cliente
             Bundle bundle = new Bundle();
             bundle.putLong("servicoId", servicoId);
-            bundle.putInt("tipoServico",tipoServico);
-            bundle.putInt("idCliente",idCliente);
-            bundle.putDouble("valor",valor);
-            bundle.putString("dataAceiteServico",dataAceiteServico);
-            bundle.putInt("estado",estado);
-            bundle.putString("dataPagamento",dataPagamento);
+            bundle.putInt("tipoServico", tipoServico);
+            bundle.putInt("idCliente", idCliente);
+            bundle.putDouble("valor", valor);
+            bundle.putString("dataAceiteServico", dataAceiteServico);
+            bundle.putInt("estado", estado);
+            bundle.putString("dataPagamento", dataPagamento);
 
             // Cria o BottomSheetDeletarCliente e passa os dados
             BottomSheetEditarServico fragment = new BottomSheetEditarServico();
             fragment.setArguments(bundle); // Passa os dados para o fragment
             fragment.setOnEdicaoConfirmadaListener(this); // Defina o listener
             // Exibe o BottomSheetDeletarCliente
-            fragment.show(getParentFragmentManager(), fragment.getTag());
+            fragment.show(getParentFragmentManager(), "BottomSheetDialogFragment");
+            }
         }
     }
 

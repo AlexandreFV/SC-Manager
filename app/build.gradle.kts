@@ -74,6 +74,7 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.0")
     implementation ("com.google.android.material:material:1.9.0")
     implementation ("androidx.viewpager2:viewpager2:1.1.0")
+    implementation ("com.google.android.flexbox:flexbox:3.0.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

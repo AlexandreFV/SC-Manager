@@ -83,7 +83,8 @@ public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ClienteV
         ClienteDiffCallback diffCallback = new ClienteDiffCallback(this.listaClientes, listaClientes);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
 
-        this.listaClientes = listaClientes;
+        this.listaClientes.clear();
+        this.listaClientes.addAll(listaClientes);
 
         // Aplica as mudanças ao RecyclerView
         diffResult.dispatchUpdatesTo(this);  // Notifica o RecyclerView sobre as mudanças
@@ -106,14 +107,5 @@ public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ClienteV
             layoutCard = itemView.findViewById(R.id.layoutCard);
         }
 
-    }
-
-    // Metodo para atualizar os dados
-    public void atualizarClientes(List<Cliente> novosClientes) {
-        setCliente(novosClientes);
-    }
-
-    public void setData(List<Cliente> clientes) {
-        setCliente(clientes);
     }
 }

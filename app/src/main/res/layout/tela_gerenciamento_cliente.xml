@@ -117,6 +117,23 @@
             app:layout_constraintTop_toTopOf="@+id/QuadradoGrafico"
             app:layout_constraintVertical_bias="1.0" />
 
+        <TextView
+            android:id="@+id/textNaoHaClientes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:gravity="center"
+            android:text="Não há clientes adicionados!"
+            android:textColor="#100E0E"
+            android:textSize="14sp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linhaQuadradoGrafico2" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/GrupoQuadradoBaixoGraficoServ"
             android:layout_width="match_parent"
@@ -134,6 +151,7 @@
                 android:id="@+id/QuadradoLista"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:scrollbars="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -190,6 +208,23 @@
             app:layout_constraintTop_toTopOf="@+id/QuadradoGraficoCategoria"
             app:layout_constraintVertical_bias="1.0" />
 
+        <TextView
+            android:id="@+id/textNaoHaCategorias"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:gravity="center"
+            android:text="Não há categorias adicionados!"
+            android:textColor="#100E0E"
+            android:textSize="14sp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/QuadradoGraficoCategoria" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/GrupoQuadradoBaixoGraficoCategoria"
             android:layout_width="match_parent"
@@ -207,6 +242,7 @@
                 android:id="@+id/QuadradoListaCategoria"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:scrollbars="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -262,6 +298,23 @@
             app:layout_constraintStart_toStartOf="@+id/quadradoGraficoServ"
             app:layout_constraintTop_toBottomOf="@+id/quadradoGraficoServ" />
 
+        <TextView
+            android:id="@+id/textNaoHaServicos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:gravity="center"
+            android:text="Não há serviços adicionados!"
+            android:textColor="#100E0E"
+            android:textSize="14sp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/quadradoGraficoServ" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/GrupoQuadradoBaixoGraficoServ"
             android:layout_width="match_parent"
@@ -279,6 +332,7 @@
                 android:id="@+id/QuadradoListaServ"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:scrollbars="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

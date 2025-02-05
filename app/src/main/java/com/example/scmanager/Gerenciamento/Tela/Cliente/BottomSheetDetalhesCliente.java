@@ -53,6 +53,8 @@ public class BottomSheetDetalhesCliente extends BottomSheetDialogFragment implem
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.buttonExcluirCliente) {
+            if (getParentFragmentManager().findFragmentByTag("BottomSheetDialogFragment") == null)
+            {
             // Cria o Bundle com os dados do cliente
             Bundle bundle = new Bundle();
             bundle.putLong("clienteId", idCliente);
@@ -64,8 +66,11 @@ public class BottomSheetDetalhesCliente extends BottomSheetDialogFragment implem
             fragment.setArguments(bundle); // Passa os dados para o fragment
             fragment.setOnExclusaoConfirmadaListener(this); // Defina o listener
             // Exibe o BottomSheetDeletarCliente
-            fragment.show(getParentFragmentManager(), fragment.getTag());
-        } else if (v.getId() == R.id.buttonEditarCliente){
+            fragment.show(getParentFragmentManager(), "BottomSheetDialogFragment");
+            }
+        } else if (v.getId() == R.id.buttonEditarCliente) {
+            if (getParentFragmentManager().findFragmentByTag("BottomSheetDialogFragment") == null)
+            {
             // Cria o Bundle com os dados do cliente
             Bundle bundle = new Bundle();
             bundle.putLong("clienteId", idCliente);
@@ -77,7 +82,8 @@ public class BottomSheetDetalhesCliente extends BottomSheetDialogFragment implem
             fragment.setArguments(bundle); // Passa os dados para o fragment
             fragment.setOnEdicaoConfirmadaListener(this); // Defina o listener
             // Exibe o BottomSheetDeletarCliente
-            fragment.show(getParentFragmentManager(), fragment.getTag());
+            fragment.show(getParentFragmentManager(), "BottomSheetDialogFragment");
+            }
         }
     }
 

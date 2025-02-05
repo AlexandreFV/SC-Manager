@@ -29,15 +29,13 @@ public class CategoriaDiffCallback extends DiffUtil.Callback{
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
         // Verifica se os itens são os mesmos (você pode usar o ID ou algum identificador único)
-        return oldList.get(oldItemPosition).getId() == newList.get(newItemPosition).getId();
+        return oldList.get(oldItemPosition).getId().equals(newList.get(newItemPosition).getId());
     }
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
         // Verifica se o conteúdo dos itens é o mesmo
-        Categoria oldCategoria = oldList.get(oldItemPosition);
-        Categoria newCategoria = newList.get(newItemPosition);
-        return oldCategoria.equals(newCategoria);  // Supondo que você tenha implementado equals() em Categoria
+        return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
     }
 
     @Override

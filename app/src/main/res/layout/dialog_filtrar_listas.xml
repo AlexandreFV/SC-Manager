@@ -279,6 +279,12 @@
             app:layout_constraintTop_toBottomOf="@+id/textAdicionarCliente2">
 
             <RadioButton
+                android:id="@+id/RadioButtonNomeClienteClientePadrao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Padrão" />
+
+            <RadioButton
                 android:id="@+id/RadioButtonNomeClienteClienteCrescente"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -289,6 +295,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Decrescente" />
+
+
         </RadioGroup>
 
         <View
@@ -329,6 +337,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textAdicionarCliente3">
+
+
+            <RadioButton
+                android:id="@+id/RadioButtonTelefonesClienteClientePadrao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Padrão" />
 
             <RadioButton
                 android:id="@+id/RadioButtonTelefonesClienteClienteCrescente"
@@ -380,7 +395,7 @@
         android:id="@+id/FundoLayoutAddServico"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -436,6 +451,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textAdicionarCliente4">
 
+
+            <RadioButton
+                android:id="@+id/RadioButtonNomeTipoServicoPadrao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Padrão" />
+
             <RadioButton
                 android:id="@+id/RadioButtonNomeTipoServicoCrescente"
                 android:layout_width="wrap_content"
@@ -485,52 +507,6 @@
             app:layout_constraintTop_toBottomOf="@+id/radioGroupOrdemAlfabeticaNomesTipoServico" />
 
         <TextView
-            android:id="@+id/textAdicionarCliente5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="@font/montserrat_regular"
-            android:text="Selecionar Tipo de Serviço:"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linhaButtonsAdd6" />
-
-        <FrameLayout
-            android:id="@+id/frameLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textAdicionarCliente5">
-
-            <CheckBox
-                android:id="@+id/checkBoxModeloTipoServico"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:text="Exemplo"
-                android:visibility="invisible" />
-        </FrameLayout>
-
-        <View
-            android:id="@+id/linhaButtonsAdd23"
-            android:layout_width="0dp"
-            android:layout_height="2dp"
-            android:layout_marginTop="8dp"
-            android:background="#E0E0E0"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
-
-        <TextView
             android:id="@+id/textAdicionarCliente6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -543,7 +519,7 @@
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linhaButtonsAdd23" />
+            app:layout_constraintTop_toBottomOf="@+id/linhaButtonsAdd6" />
 
         <RadioGroup
             android:id="@+id/radioGroupOrdemAlfabeticaNomesClienteServico"
@@ -557,6 +533,12 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textAdicionarCliente6">
+
+            <RadioButton
+                android:id="@+id/RadioButtonNomeClienteServicoPadrao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Padrão" />
 
             <RadioButton
                 android:id="@+id/RadioButtonNomeClienteServicoCrescente"
@@ -611,6 +593,12 @@
             app:layout_constraintTop_toBottomOf="@+id/textAdicionarCliente7">
 
             <RadioButton
+                android:id="@+id/RadioButtonValorPadrao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Padrão" />
+
+            <RadioButton
                 android:id="@+id/RadioButtonValorCrescente"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -646,6 +634,12 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textAdicionarCliente8">
+
+            <RadioButton
+                android:id="@+id/RadioButtonDataAceitePadrao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Padrão" />
 
             <RadioButton
                 android:id="@+id/RadioButtonDataAceiteCrescente"
@@ -747,59 +741,11 @@
             app:layout_constraintTop_toBottomOf="@+id/radioGroupEstadoServico" />
 
         <androidx.constraintlayout.widget.Group
-            android:id="@+id/GrupoFiltroDataPag"
+            android:id="@+id/GrupoOrdenarPagamentoEstipuladoVencidoNVencidoOuPaga"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:constraint_referenced_ids="textOrdernarDataPag,radioGroupDataPag" />
-
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/GrupoOrdenarPagamentoEstipuladoVencidoNVencido"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:constraint_referenced_ids="textOrdernarDataPagEstipulado,linhaButtonsAdd34,radioGroupDataPagEstipulado" />
-
-        <TextView
-            android:id="@+id/textOrdernarDataPag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="@font/montserrat_regular"
-            android:text="Ordenação por Data de Pagamento:"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linhaButtonsAdd28" />
-
-        <RadioGroup
-            android:id="@+id/radioGroupDataPag"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textOrdernarDataPag">
-
-            <RadioButton
-                android:id="@+id/RadioButtonDataPagCrescente"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Crescente" />
-
-            <RadioButton
-                android:id="@+id/RadioButtonDataPagDecrescente"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Decrescente" />
-        </RadioGroup>
+            android:visibility="visible"
+            app:constraint_referenced_ids="textOrdernarDataPagEstipulado,linhaButtonsAdd34,radioGroupDataPagEstipuladoOuPaga" />
 
         <TextView
             android:id="@+id/textOrdernarDataPagEstipulado"
@@ -825,10 +771,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/radioGroupDataPagEstipulado" />
+            app:layout_constraintTop_toBottomOf="@+id/radioGroupDataPagEstipuladoOuPaga" />
 
         <RadioGroup
-            android:id="@+id/radioGroupDataPagEstipulado"
+            android:id="@+id/radioGroupDataPagEstipuladoOuPaga"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="16dp"

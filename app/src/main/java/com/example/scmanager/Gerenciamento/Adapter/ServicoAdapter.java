@@ -147,7 +147,8 @@ public class ServicoAdapter extends RecyclerView.Adapter<ServicoAdapter.ServicoV
         ServicoDiffCallback diffCallback = new ServicoDiffCallback(this.ListaServicos, listaServicos);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
 
-        this.ListaServicos = listaServicos;
+        this.ListaServicos.clear();
+        this.ListaServicos.addAll(listaServicos);
 
         // Aplica as mudanças ao RecyclerView
         diffResult.dispatchUpdatesTo(this);  // Notifica o RecyclerView sobre as mudanças
@@ -174,14 +175,5 @@ public class ServicoAdapter extends RecyclerView.Adapter<ServicoAdapter.ServicoV
             imageServicoCard = itemView.findViewById(R.id.imageServicoCard);
         }
 
-    }
-
-    // Metodo para atualizar os dados
-    public void atualizarServicos(List<Servico> novosServicos) {
-        setServico(novosServicos);
-    }
-
-    public void setData(List<Servico> servicos) {
-        setServico(servicos);
     }
 }

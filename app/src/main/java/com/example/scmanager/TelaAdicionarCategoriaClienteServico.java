@@ -19,6 +19,7 @@
     import android.widget.Toast;
 
     import androidx.constraintlayout.widget.ConstraintLayout;
+    import androidx.lifecycle.ViewModelProvider;
 
     import com.example.scmanager.Gerenciamento.Objetos.Categoria;
     import com.example.scmanager.Gerenciamento.Objetos.Cliente;
@@ -81,6 +82,10 @@
             buttonSalvarServico = view.findViewById(R.id.buttonSalvarServico);
             buttonSalvarServico.setOnClickListener(this);
 
+            clienteViewModel = new ViewModelProvider(requireActivity()).get(ClienteViewModel.class);
+            categoriaViewModel = new ViewModelProvider(requireActivity()).get(CategoriaViewModel.class);
+            servicoViewModel = new ViewModelProvider(requireActivity()).get(ServicoViewModel.class);
+
             exibirLayout(qualLayoutAddMostrar);
             if(AddServico.getVisibility() == View.VISIBLE)
             {
@@ -105,19 +110,6 @@
 
                 // Inicializa o controlador do banco (Singleton)
             return view;
-        }
-
-        public void setServicoViewModel(ServicoViewModel servicoViewModel)
-        {
-            this.servicoViewModel = servicoViewModel;
-        }
-
-        public void setClienteViewModel(ClienteViewModel clienteViewModel) {
-            this.clienteViewModel = clienteViewModel;
-        }
-
-        public void setCategoriaViewModel(CategoriaViewModel categoriaViewModel) {
-            this.categoriaViewModel = categoriaViewModel;
         }
 
         private void exibirLayout(String layoutAExibir)
