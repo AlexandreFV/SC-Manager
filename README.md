@@ -1,3 +1,5 @@
+https://github.com/user-attachments/assets/7ffca6b2-cc1c-459d-b9c8-f4eb6e445d1e
+
 # SC-Manager
 
 O SCManager é um aplicativo desenvolvido para facilitar a organização e centralização das informações de autônomos que realizam trabalhos e serviços. A ferramenta foi idealizada para oferecer uma gestão prática e eficiente, permitindo maior controle sobre os clientes e os serviços realizados.
