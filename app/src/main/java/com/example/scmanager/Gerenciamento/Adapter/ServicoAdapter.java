@@ -24,6 +24,7 @@ import com.example.scmanager.Gerenciamento.Objetos.Servico;
 import com.example.scmanager.Gerenciamento.Tela.TelaGerenciamento;
 import com.example.scmanager.Gerenciamento.ViewModel.CategoriaViewModel;
 import com.example.scmanager.Gerenciamento.ViewModel.ClienteViewModel;
+import com.example.scmanager.Inicial.Tela.TelaInicial;
 import com.example.scmanager.R;
 
 import java.util.List;
@@ -109,6 +110,8 @@ public class ServicoAdapter extends RecyclerView.Adapter<ServicoAdapter.ServicoV
             // Passa o cliente clicado para a atividade ou fragmento
             if (context instanceof TelaGerenciamento) {
                 ((TelaGerenciamento) context).onServicoClicked(servico); // Chama o metodo na classe que exibe o RecyclerView
+            } else if (context instanceof TelaInicial) {
+                ((TelaInicial) context).onServicoClicked(servico); // Chama o metodo na classe que exibe o RecyclerView
             }
         });
     }

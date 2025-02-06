@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:background="@drawable/button_add_layout_no_gradiente"
-        android:drawableStart="@drawable/pessoa_icon"
+        android:drawableStart="@drawable/pessoa_icon2"
         android:text="Cliente"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"

@@ -1,12 +1,13 @@
 <resources>
-    <!-- Tema para a tela cheia -->
-    <style name="Theme.Fullscreen" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- Tema Fullscreen -->
+    <style name="Theme.Fullscreen" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Remove a barra de status (superior) -->
         <item name="android:windowFullscreen">true</item>
-        <!-- Opcional: Mudar o modo de navegação também (barra de navegação) -->
+        <!-- Deixar a barra de navegação translúcida -->
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
+    <!-- Customização do TextInputLayout -->
     <style name="CustomTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxStrokeColor">#288699</item> <!-- Cor da borda quando focado -->
         <item name="boxStrokeWidth">2dp</item>         <!-- Espessura da borda padrão -->
@@ -15,5 +16,6 @@
         <item name="hintTextColor">@color/black</item> <!-- Cor do hint flutuante -->
         <item name="boxBackgroundColor">@android:color/transparent</item> <!-- Cor de fundo -->
     </style>
+
 
 </resources>

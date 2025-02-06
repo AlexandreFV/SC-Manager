@@ -42,6 +42,7 @@ import com.example.scmanager.Gerenciamento.Adapter.ServicoAdapter;
 import com.example.scmanager.Gerenciamento.Objetos.Categoria;
 import com.example.scmanager.Gerenciamento.Objetos.Cliente;
 import com.example.scmanager.Gerenciamento.Objetos.Servico;
+import com.example.scmanager.Gerenciamento.Tela.Servico.BottomSheetDetalhesServico;
 import com.example.scmanager.Gerenciamento.Tela.TelaGerenciamento;
 import com.example.scmanager.Gerenciamento.ViewModel.CategoriaViewModel;
 import com.example.scmanager.Gerenciamento.ViewModel.ClienteViewModel;
@@ -88,6 +89,8 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
     private View FundoGradiente;
 
     private TextView TelaInicial;
+    private TextView Recebimento;
+    private TextView periodo;
     private int getOriginalWidthGradiente;
     private int getOriginalHeightGradiente;
 
@@ -122,7 +125,7 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
     private TextView textNaoHaDadosGrafico;
     private boolean temDadosServico = false;
     private Button buttonAnalisarGrafico;
-    private Button buttonFiltrar;
+    private ImageButton buttonFiltrar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Handle the splash screen transition.
@@ -131,6 +134,8 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tela_inicial);
 
+        periodo = findViewById(R.id.periodo);
+        Recebimento = findViewById(R.id.Recebimento);
         grafico = findViewById(R.id.grafico);
         setaBaixo = findViewById(R.id.setaBaixo);
         SwitcherDasInfosDoGrafico = findViewById(R.id.SwitcherDasInfosDoGrafico);
@@ -141,6 +146,19 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         textRespostaIA = findViewById(R.id.textRespostaIA);
         textNaoHaDadosGrafico = findViewById(R.id.textNaoHaDadosGrafico);
         buttonAnalisarGrafico = findViewById(R.id.buttonAnalisarGrafico);
+        FundoGradiente = findViewById(R.id.FundoGradiente);
+        GrupoIcones = findViewById(R.id.GrupoIcones);
+        TelaInicial = findViewById(R.id.TelaInicial);
+
+        if (primeiraExecucao) {
+
+            deixarInvisivelGrupoIcones(GrupoIcones);
+            deixarInvisivelGrupoIcones(TelaInicial);
+
+            AnimacaoDiminuirGradiente();
+
+            primeiraExecucao = false;
+        }
 
         clienteViewModel = new ViewModelProvider(this).get(ClienteViewModel.class);
         clienteAdapter = new ClienteAdapter(TelaInicial.this, new ArrayList<>());
@@ -173,7 +191,8 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         QuadradoListaDados.setLayoutManager(new LinearLayoutManager(this));
         QuadradoListaDados.setAdapter(servicoAdapter);
 
-        servicoViewModel.getListaServico().observe(this, new Observer<List<Servico>>() {
+
+        servicoViewModel.getListaServicoInicio().observe(this, new Observer<List<Servico>>() {
             @Override
             public void onChanged(List<Servico> servicos) {
                 Log.d("TelaInicial", "Serviços atualizados: " + servicos);
@@ -189,32 +208,17 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
                     grafico.setVisibility(View.VISIBLE);
                     textNaoHaDadosGrafico.setVisibility(View.INVISIBLE);
                     setaBaixo.setEnabled(true);
-                    QuadradoListaDados.postDelayed(() -> gerarDadosGrafico(), 100);
+                    QuadradoListaDados.postDelayed(() -> gerarDadosGrafico(), 1);
                 } else {
                     grafico.setVisibility(View.INVISIBLE);
                     textNaoHaDadosGrafico.setVisibility(View.VISIBLE);
                     setaBaixo.setEnabled(false);
                 }
-
+                alterarTextGrafico();
                 QuadradoListaDados.requestLayout();
 
-                // Aguarda a interface atualizar antes de gerar o gráfico
-                QuadradoListaDados.postDelayed(() -> gerarDadosGrafico(), 100);
             }
         });
-
-        if (primeiraExecucao) {
-            FundoGradiente = findViewById(R.id.FundoGradiente);
-            GrupoIcones = findViewById(R.id.GrupoIcones);
-            TelaInicial = findViewById(R.id.TelaInicial);
-
-            deixarInvisivelGrupoIcones(GrupoIcones);
-            deixarInvisivelGrupoIcones(TelaInicial);
-
-            AnimacaoDiminuirGradiente();
-
-            primeiraExecucao = false;
-        }
 
         buttonFiltrar = findViewById(R.id.buttonFiltrar);
 
@@ -229,6 +233,7 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
         buttonGerenciamentoCategoria = findViewById(R.id.buttonGerenciamentoCategoria);
         buttonGerenciamentoCategoria.setOnClickListener(this);
         buttonAnalisarGrafico.setOnClickListener(this);
+
     }
 
     @Override
@@ -237,7 +242,7 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
 
         // Limpa observadores anteriores
         categoriaViewModel.getListaCategorias().removeObservers(this);
-        servicoViewModel.getListaServico().removeObservers(this);
+        servicoViewModel.getListaServicoInicio().removeObservers(this);
 
         // Re-define as observações
         categoriaViewModel.getListaCategorias().observe(this, new Observer<List<Categoria>>() {
@@ -249,9 +254,9 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
                 }
             }
         });
-
-
-        servicoViewModel.getListaServico().observe(this, new Observer<List<Servico>>() {
+//
+//
+        servicoViewModel.getListaServicoInicio().observe(this, new Observer<List<Servico>>() {
             @Override
             public void onChanged(List<Servico> servicos) {
                 if (servicos != null && !servicos.equals(servicoAdapter.getServicos())) {
@@ -263,7 +268,6 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
                     // Aguarda a interface atualizar antes de gerar o gráfico
                     if(temDadosServico)
                     {
-                        grafico = findViewById(R.id.grafico);
                         grafico.setVisibility(View.VISIBLE);
 
                         textNaoHaDadosGrafico = findViewById(R.id.textNaoHaDadosGrafico);
@@ -274,7 +278,6 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
 
                         QuadradoListaDados.postDelayed(() -> gerarDadosGrafico(), 100);
                     } else {
-                        grafico = findViewById(R.id.grafico);
                         grafico.setVisibility(View.INVISIBLE);
 
                         textNaoHaDadosGrafico = findViewById(R.id.textNaoHaDadosGrafico);
@@ -282,89 +285,74 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
 
                         setaBaixo = findViewById(R.id.setaBaixo);
                         setaBaixo.setEnabled(false);
+                        animarQuadradoLista(false);
                     }
+                    alterarTextGrafico();
                 }
             }
         });
-
+//
         categoriaViewModel.carregarCategorias();
         clienteViewModel.carregarClientes();
         servicoViewModel.carregarServicosInicio();
 
     }
 
-    private void configurarGrafico(PieData data) {
-        // Configurações do gráfico
-        grafico.setData(data);
-        grafico.getDescription().setEnabled(false);
-        grafico.getLegend().setEnabled(true);
-        grafico.getLegend().setDrawInside(false);
-        grafico.setDrawEntryLabels(false);
-        grafico.setCenterTextColor(Color.WHITE);
-        grafico.setDrawHoleEnabled(true);
-        grafico.setHoleRadius(50f);  // Tamanho do buraco central
-        grafico.setHoleColor(Color.TRANSPARENT);
-
-        Legend l = grafico.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER); // Ajuste a vertical
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT); // Alinhar à direita
-        l.setOrientation(Legend.LegendOrientation.VERTICAL); // Manter as legendas verticais
-        l.setTextColor(Color.BLACK);
-        l.setTextSize(14f);
-
-    }
-
     private void gerarDadosGrafico() {
-        // Gerando dados aleatórios para o gráfico de pizza
         ArrayList<PieEntry> entries = new ArrayList<>();
         Map<String, Float> tipoServicoMap = new HashMap<>();
         List<Servico> listaServicos = servicoAdapter.getServicos();
 
-        // Variáveis de análise
-         totalRecebido = 0f;
-         clienteMaiorCompra = "";
-         clienteMenorCompra = "";
-         maiorVenda = 0f;
-         menorVenda = Float.MAX_VALUE;
-         dataMaisVendas = "";
-         dataMenosVendas = "";
-         maiorVendaDia = 0f;
-         menorVendaDia = Float.MAX_VALUE;
+        totalRecebido = 0f;
+        clienteMaiorCompra = "";
+        clienteMenorCompra = "";
+        maiorVenda = 0f;
+        menorVenda = Float.MAX_VALUE;
+        dataMaisVendas = "";
+        dataMenosVendas = "";
+        maiorVendaDia = 0f;
+        menorVendaDia = Float.MAX_VALUE;
+
         SharedPreferences prefs = getApplication().getSharedPreferences("PreferenciasApp", getApplication().MODE_PRIVATE);
 
-        if (listaServicos != null && listaServicos.size() > 0) {
-            String ordemCategoriaOuCliente = prefs.getString("ordemCategoriaOuCliente", "Categorias");
+        String ordemDeData = prefs.getString("ordemDeData", "");
+        String ordemAteData = prefs.getString("ordemAteData", "");
+        String ordemEstadoInicio = prefs.getString("ordemEstadoInicio", "Todos");
+        String ordemCategoriaOuCliente = prefs.getString("ordemCategoriaOuCliente", "Categorias");
 
+        if (listaServicos != null && !listaServicos.isEmpty()) {
             Map<String, Float> clienteMap = new HashMap<>();
             Map<String, Float> diaMap = new HashMap<>();
 
             for (Servico servico : listaServicos) {
                 Float valor = servico.getValor().floatValue();
-                String chaveAgrupamento;
+                String estadoPagamento = servico.getEstado() == 1 ? " (Pago)" : " (Não Pago)";
                 String cliente = getNomeClienteById(servico.getIdCliente());
-                String dia = servico.getDataAceiteServico();  // Assumindo que o método getData() retorna a data da venda
+                String dia = "";
+                if(ordemEstadoInicio.equals("Todos"))
+                {
+                    dia = servico.getDataAceiteServico();
+                } else if (ordemEstadoInicio.equals("Pago")){
+                    dia = servico.getDataPagamento();
+                } else if (ordemEstadoInicio.equals("NaoPago")){
+                    dia = servico.getDataPagamento();
+                }
 
-                // Atualizar o total recebido no período
                 totalRecebido += valor;
-
-                // Calcular o cliente com maior e menor compra
                 clienteMap.put(cliente, clienteMap.getOrDefault(cliente, 0f) + valor);
-
-                // Calcular a data com maior e menor somatório de vendas
                 diaMap.put(dia, diaMap.getOrDefault(dia, 0f) + valor);
 
-                // Agrupar por cliente ou por categoria baseado na preferência
+                String chaveAgrupamento;
                 if ("Clientes".equals(ordemCategoriaOuCliente)) {
-                    chaveAgrupamento = cliente;
+                    chaveAgrupamento = cliente + estadoPagamento;
                 } else {
                     int tipoServicoId = servico.getTipoServico();
-                    chaveAgrupamento = getNomeCategoriaById(tipoServicoId);
+                    chaveAgrupamento = getNomeCategoriaById(tipoServicoId) + estadoPagamento;
                 }
 
                 tipoServicoMap.put(chaveAgrupamento, tipoServicoMap.getOrDefault(chaveAgrupamento, 0f) + valor);
             }
 
-            // Encontrar o cliente com maior e menor compra
             for (Map.Entry<String, Float> entry : clienteMap.entrySet()) {
                 if (entry.getValue() > maiorVenda) {
                     maiorVenda = entry.getValue();
@@ -376,7 +364,6 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
                 }
             }
 
-            // Encontrar o dia com maior e menor somatório de vendas
             for (Map.Entry<String, Float> entry : diaMap.entrySet()) {
                 if (entry.getValue() > maiorVendaDia) {
                     maiorVendaDia = entry.getValue();
@@ -388,7 +375,6 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
                 }
             }
 
-            // Agora, para o gráfico de pizza, transformamos os dados agrupados em entradas para o gráfico
             for (Map.Entry<String, Float> entry : tipoServicoMap.entrySet()) {
                 entries.add(new PieEntry(entry.getValue(), entry.getKey()));
             }
@@ -400,25 +386,32 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
 
             configurarGrafico(data);
             grafico.invalidate();
-
         } else {
             Log.d("tag", "Lista de serviços está vazia!");
         }
 
-        String ordemDeData = prefs.getString("ordemDeData", "");
-        String ordemAteData = prefs.getString("ordemAteData", "");
-        String ordemEstadoInicio = prefs.getString("ordemEstadoInicio", "Todos");
-        String ordemCategoriaOuCliente = prefs.getString("ordemCategoriaOuCliente", "Categorias");
 
-        // Criar o conteúdo que será enviado ao Gemini
+        if (ordemEstadoInicio.equals("Todos")) {
+            Recebimento.setText("Total à Receber e Recebido");
+        } else if (ordemEstadoInicio.equals("NaoPago")) {
+            Recebimento.setText("Total á Receber");
+        } else if (ordemEstadoInicio.equals("Pago")) {
+            Recebimento.setText("Total Recebido");
+        }
+
+        if (!ordemDeData.isEmpty() || !ordemAteData.isEmpty()) {
+            periodo.setText("Período: " + ordemDeData + " até " + ordemAteData);
+        } else if(ordemDeData.isEmpty() && ordemAteData.isEmpty()){
+            periodo.setText("Período Total");
+            ordemDeData = "Todo o Periodo";
+            ordemAteData = "Todo o Periodo";
+        }
+
         analiseTexto = "Aqui estão os resultados da análise do gráfico:\n";
-
         analiseTexto += "Filtros utilizados:\n";
         analiseTexto += "Período: " + ordemDeData + " até " + ordemAteData + "\n";
         analiseTexto += "Estado: " + ordemEstadoInicio + "\n";
         analiseTexto += "Agrupamento: " + (ordemCategoriaOuCliente.equals("Clientes") ? "Por Cliente" : "Por Categoria") + "\n";
-
-
         analiseTexto += "Total a receber: " + totalRecebido + "\n";
         analiseTexto += "Cliente com maior compra: " + clienteMaiorCompra + " - " + maiorVenda + "\n";
         analiseTexto += "Cliente com menor compra: " + clienteMenorCompra + " - " + menorVenda + "\n";
@@ -427,13 +420,61 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
     }
 
 
+    private void configurarGrafico(PieData data) {
+
+        Legend l = grafico.getLegend();
+        l.setEnabled(true);
+        l.setOrientation(Legend.LegendOrientation.VERTICAL); // Deixa as legendas em formato vertical
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER); // Centraliza verticalmente
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT); // Move para o lado direito
+        l.setDrawInside(false); // Evita que a legenda fique sobre o gráfico
+        l.setTextColor(Color.BLACK);
+        l.setTextSize(14f);
+
+        // Configurações do gráfico
+        grafico.setData(data);
+        grafico.getDescription().setEnabled(false);
+        grafico.setDrawEntryLabels(false);
+        grafico.setCenterTextColor(Color.WHITE);
+        grafico.setDrawHoleEnabled(true);
+        grafico.setHoleRadius(50f); // Tamanho do buraco central
+        grafico.setHoleColor(Color.TRANSPARENT);
+
+    }
+
 
     private void animarGrafico() {
         // Animação suave para preencher o gráfico em 2 segundos
         grafico.animateXY(1000, 1000, Easing.Linear); // Animação em ambos os eixos (X e Y) com duração de 2 segundos e interpolação linear
     }
 
+    private void alterarTextGrafico()
+    {
+        SharedPreferences prefs = getApplication().getSharedPreferences("PreferenciasApp", getApplication().MODE_PRIVATE);
+        String ordemDeData = prefs.getString("ordemDeData", "");
+        String ordemAteData = prefs.getString("ordemAteData", "");
+        String ordemEstadoInicio = prefs.getString("ordemEstadoInicio", "Todos");
+        String ordemCategoriaOuCliente = prefs.getString("ordemCategoriaOuCliente", "Categorias");
+        if(ordemEstadoInicio.equals("Todos"))
+        {
+            Recebimento.setText("Total à Receber e Recebido");
+        } else if (ordemEstadoInicio.equals("NaoPago")){
+            Recebimento.setText("Total á Receber");
+        } else if (ordemEstadoInicio.equals("Pago")){
+            Recebimento.setText("Total Recebido");
+        }
 
+        if(!ordemDeData.equals("")|| !ordemAteData.equals(""))
+        {
+            periodo.setText("Periodo: " + ordemDeData + " até " + ordemAteData);
+        }
+
+        if(ordemDeData.equals("") && ordemAteData.equals(""))
+        {
+            periodo.setText("Periodo Total");
+        }
+
+    }
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.buttonGerenciamentoClientes) {
@@ -785,6 +826,35 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
             scrollView.post(() -> scrollView.smoothScrollTo(0, buttonCategoria.getBottom()));
         }
     }
+
+    public void onServicoClicked(Servico servico) {
+        if (getSupportFragmentManager().findFragmentByTag("BottomSheetDialog") == null)
+        {
+            BottomSheetDetalhesServico fragment = new BottomSheetDetalhesServico();
+
+            long servicoId = servico.getId();
+            Integer tipoServico = servico.getTipoServico();
+            Integer idCliente = servico.getIdCliente();
+            Double valor = servico.getValor();
+            String dataAceiteServico = servico.getDataAceiteServico();
+            Integer estado = servico.getEstado();
+            String dataPagamento = servico.getDataPagamento();
+
+            Bundle bundle = new Bundle();
+            bundle.putLong("servicoId", servicoId);
+            bundle.putInt("tipoServico", tipoServico);
+            bundle.putInt("idCliente", idCliente);
+            bundle.putDouble("valor", valor);
+            bundle.putString("dataAceiteServico", dataAceiteServico);
+            bundle.putInt("estado", estado);
+            bundle.putString("dataPagamento", dataPagamento);
+
+            // Exemplo: Você pode iniciar uma nova Activity com os detalhes do cliente
+            fragment.setArguments(bundle);
+            fragment.show(getSupportFragmentManager(), "BottomSheetDialog");
+        }
+    }
+
 
     private String getNomeCategoriaById(int idCategoria) {
         if (categoriaViewModel.getListaCategorias().getValue() != null) {

@@ -42,7 +42,7 @@
         android:layout_marginTop="40dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/button_add_layout_no_gradiente"
-        android:drawableStart="@drawable/pessoa_icon"
+        android:drawableStart="@drawable/pessoa_icon2"
         android:fontFamily="@font/montserrat_regular"
         android:minWidth="100dp"
         android:paddingStart="10dp"

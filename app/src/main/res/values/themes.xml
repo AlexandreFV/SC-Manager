@@ -1,7 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Tema para a splash screen -->
-    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+    <style name="Theme.App.Splash" parent="Theme.SplashScreen">
         <item name="android:windowBackground">@drawable/gradiente_fundo_loading</item>
+        <item name="windowSplashScreenBackground">@drawable/gradiente_fundo_loading</item>
         <item name="windowSplashScreenAnimationDuration">1500</item>
         <item name="postSplashScreenTheme">@style/Theme.SCManager</item>
         <item name="android:navigationBarColor">@color/black</item>
@@ -35,6 +36,7 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
     </style>
+
 
 
 </resources>

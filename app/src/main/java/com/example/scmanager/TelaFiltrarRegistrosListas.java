@@ -269,6 +269,7 @@ public class TelaFiltrarRegistrosListas extends BottomSheetDialogFragment implem
             valorExibir="NAOPAGO";
         } else{
             valorExibir="TODOS";
+            radioGroupDataPagEstipuladoOuPaga.check(R.id.RadioButtonDataPagEstipuladoTodos);
         }
 
     }

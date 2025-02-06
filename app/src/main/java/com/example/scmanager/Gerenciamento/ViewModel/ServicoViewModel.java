@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 public class ServicoViewModel extends AndroidViewModel {
     private ServicoRepository servicoRepository;
     private MutableLiveData<List<Servico>> listaServico = new MutableLiveData<>();
+    private MutableLiveData<List<Servico>> listaServicoInicio = new MutableLiveData<>();  // Nova lista para os serviços
     private ClienteRepository clienteRepository; // Adicionando o repositório de cliente
     private CategoriaRepository categoriaRepository; // Adicionando o repositório de cliente
     private Map<Integer, String> categoriaMap = new HashMap<>();
@@ -50,12 +51,17 @@ public class ServicoViewModel extends AndroidViewModel {
         clienteRepository = new ClienteRepository(application.getApplicationContext()); // Inicializa o repositório de cliente
         categoriaRepository = new CategoriaRepository(application.getApplicationContext()); // Inicializa o repositório de cliente
         listaServico = new MutableLiveData<>();
+        listaServicoInicio = new MutableLiveData<>();
         carregarServicos();
         carregarServicosInicio();
     }
 
     public LiveData<List<Servico>> getListaServico() {
         return listaServico;
+    }
+
+    public LiveData<List<Servico>> getListaServicoInicio() {
+        return listaServicoInicio;
     }
 
     public void adicionarServico(Integer idCliente, Integer idCategoria, Float valor, String dataAceiteServ, String estado, String dataPagOuEstipu) {
@@ -252,7 +258,7 @@ public class ServicoViewModel extends AndroidViewModel {
 
                     // Se nenhuma categoria ou cliente for selecionado, não exibe nenhum serviço
                     if (categoriasSelecionadas.isEmpty() || clientesSelecionados.isEmpty()) {
-                        listaServico.postValue(new ArrayList<>()); // Exibe uma lista vazia
+                        listaServicoInicio.postValue(new ArrayList<>());  // Exibe uma lista vazia para listaServicoInicio2
                         return;
                     }
 
@@ -404,7 +410,7 @@ public class ServicoViewModel extends AndroidViewModel {
                     .collect(Collectors.groupingBy(servico -> String.valueOf(servico.getIdCliente())));
         }
 
-        listaServico.postValue(servicos); // Atualiza a LiveData com os serviços filtrados
+        listaServicoInicio.postValue(servicos); // Atualiza a LiveData com os serviços filtrados
     }
 
 
