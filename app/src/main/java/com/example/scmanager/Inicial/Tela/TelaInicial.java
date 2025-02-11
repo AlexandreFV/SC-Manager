@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.app.ActionBar;
 import android.app.Application;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +18,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -128,11 +130,13 @@ public class TelaInicial extends AppCompatActivity implements View.OnClickListen
     private ImageButton buttonFiltrar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Handle the splash screen transition.
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
 
+        // Esconde a barra de status.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tela_inicial);
+
+
 
         periodo = findViewById(R.id.periodo);
         Recebimento = findViewById(R.id.Recebimento);
