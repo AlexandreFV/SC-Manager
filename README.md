@@ -1,3 +1,14 @@
+![Kotlin](https://img.shields.io/badge/Kotlin-Android-7F52FF)
+![Android](https://img.shields.io/badge/Platform-Android-3DDC84)
+![Jetpack Compose](https://img.shields.io/badge/Jetpack-Compose-4285F4)
+![SQLite](https://img.shields.io/badge/SQLite-Database-003B57)
+![MVVM](https://img.shields.io/badge/Architecture-MVVM-blue)
+![Repository Pattern](https://img.shields.io/badge/Pattern-Repository-orange)
+![Gemini AI](https://img.shields.io/badge/AI-Gemini-8E75FF)
+![Dashboard](https://img.shields.io/badge/Feature-Dashboard-success)
+![Financial Control](https://img.shields.io/badge/System-Financial%20Control-green)
+![Mobile App](https://img.shields.io/badge/Application-Mobile-important)
+
 # SC-Manager
 
 Aplicativo desenvolvido para auxiliar autônomos no gerenciamento de clientes, serviços e informações financeiras, centralizando dados importantes em uma única plataforma.
