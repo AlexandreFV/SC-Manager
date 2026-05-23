@@ -1,4 +1,4 @@
-![Kotlin](https://img.shields.io/badge/Kotlin-Android-7F52FF)
+![Java](https://img.shields.io/badge/java-Android-7F52FF)
 ![Android](https://img.shields.io/badge/Platform-Android-3DDC84)
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack-Compose-4285F4)
 ![SQLite](https://img.shields.io/badge/SQLite-Database-003B57)
