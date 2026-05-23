@@ -1,8 +1,97 @@
-https://github.com/user-attachments/assets/7ffca6b2-cc1c-459d-b9c8-f4eb6e445d1e
-
 # SC-Manager
 
-O SCManager é um aplicativo desenvolvido para facilitar a organização e centralização das informações de autônomos que realizam trabalhos e serviços. A ferramenta foi idealizada para oferecer uma gestão prática e eficiente, permitindo maior controle sobre os clientes e os serviços realizados.
-Entre suas principais funcionalidades, o aplicativo permite que o usuário cadastre clientes e serviços, além de personalizar as categorias utilizadas como tipos de serviço. O sistema organiza os serviços de acordo com seu estado, dividido em "Pago" e "Não Pago". Além disso, é possível gerar gráficos com base em filtros pré-definidos pelo usuário, oferecendo uma visão clara e detalhada sobre os serviços realizados e sua situação financeira.
-Um dos diferenciais do SCManager é a integração com a IA Gemini, que realiza análises avançadas com base nos dados gerados pelos gráficos. Isso possibilita que o usuário obtenha insights importantes para melhorar sua tomada de decisão e gerenciar de forma mais estratégica os serviços e clientes.
-Com uma interface intuitiva e funcionalidades práticas, o SCManager é uma solução ideal para autônomos que buscam otimizar sua rotina e profissionalizar a gestão de seus serviços.
+Aplicativo desenvolvido para auxiliar autônomos no gerenciamento de clientes, serviços e informações financeiras, centralizando dados importantes em uma única plataforma.
+
+O projeto foi criado com foco em organização, produtividade e análise estratégica, permitindo o controle completo dos serviços realizados e fornecendo insights através da integração com Inteligência Artificial.
+
+---
+
+## Funcionalidades
+
+* Cadastro e gerenciamento de clientes
+* Cadastro de serviços personalizados
+* Organização de serviços por status:
+
+  * Pago
+  * Não Pago
+* Criação de categorias personalizadas
+* Dashboard com gráficos e filtros
+* Controle financeiro básico
+* Integração com IA Gemini para análise de dados
+* Interface mobile focada em praticidade
+
+---
+
+## Objetivos do Projeto
+
+* Centralizar informações de serviços e clientes
+* Melhorar a organização de autônomos
+* Facilitar análise financeira
+* Automatizar interpretações de dados utilizando IA
+* Fornecer uma solução simples e intuitiva para gestão de serviços
+
+---
+
+## Tecnologias Utilizadas
+
+### Mobile
+
+* Android Studio
+* Java
+* Jetpack Compose
+
+### Banco de Dados
+
+* SQLite
+
+### Integrações
+
+* Gemini AI
+
+### Arquitetura
+
+* MVVM
+* Repository Pattern
+
+## Diferenciais Técnicos
+
+* Estrutura organizada utilizando separação de responsabilidades
+* Persistência local de dados
+* Geração dinâmica de gráficos
+* Integração com Inteligência Artificial para análise de informações
+* Interface otimizada para dispositivos móveis
+
+---
+
+## Funcionalidades da IA
+
+A integração com a IA Gemini permite:
+
+* análise de padrões financeiros
+* identificação de tendências
+* sugestões baseadas nos dados cadastrados
+* apoio na tomada de decisão
+
+## Estrutura do Projeto
+
+```bash
+app/
+ ├── data/
+ ├── domain/
+ ├── repository/
+ ├── ui/
+ └── viewmodel/
+```
+
+---
+
+## Objetivos Técnicos
+
+O projeto foi desenvolvido para aprimorar conhecimentos em:
+
+* desenvolvimento mobile
+* arquitetura MVVM
+* persistência local
+* organização de código
+* integração com APIs externas
+* manipulação de dados e gráficos
